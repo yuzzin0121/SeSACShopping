@@ -39,47 +39,71 @@ class NicknameSettingViewController: UIViewController, ViewProtocol {
     @IBOutlet weak var finishButton: UIButton!
     
     
-    lazy var profileImages: [UIImage] = [
-        ImageStyle.profile1, ImageStyle.profile2, ImageStyle.profile3, ImageStyle.profile4, ImageStyle.profile5, ImageStyle.profile6, ImageStyle.profile7, ImageStyle.profile8, ImageStyle.profile9, ImageStyle.profile10, ImageStyle.profile11, ImageStyle.profile12, ImageStyle.profile13, ImageStyle.profile14
-    ]
-    
-    var selectedImage: UIImage? = nil
+    lazy var profileList: [Profile] = ProfileImage.profileList
+    var type: Type = .Setting
+    var selectedImageIndex: Int? = nil
     var nickname: String? = nil
     var isValid: Bool = false
+    var completionHandler: ((String, Int) -> Void)?
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        print(#function)
         configureView()
+        selectedImageIndex = getRandomImageIndex()
+        profileImageView.image = profileList[selectedImageIndex!].profileImage
         designViews()
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        selectedImage = getRandomImage()
-        profileImageView.image = selectedImage
+        super.viewWillAppear(true)
+        print(#function)
+        navigationItem.title = (type == .Onboarding) ? "프로필 설정" : "프로필 수정"
+        if type == .Setting {
+            nickname = UserDefaultManager.shared.nickname
+            nicknameTextField.text = UserDefaultManager.shared.nickname
+            isValid = true
+        }
+        let index = UserDefaultManager.shared.profileImageIndex
+        profileImageView.image = profileList[index].profileImage
     }
     
+    // 프로필 사진 클릭했을 때
     @IBAction func profileImageClicked(_ sender: UITapGestureRecognizer) {
         let MainSB = UIStoryboard(name: "Main", bundle: nil)
         let ProfileImageSettingVC = MainSB.instantiateViewController(withIdentifier: ProfileImageSettingViewController.identifier) as! ProfileImageSettingViewController
-        
+        ProfileImageSettingVC.type = self.type
         navigationController?.pushViewController(ProfileImageSettingVC, animated: true)
     }
     
+    // 완료 버튼 클릭했을 때
     @IBAction func finishButtonClicked(_ sender: UIButton) {
-        if isValid {
+        print("click")
+        print(isValid)
+        print(type == .Setting)
+        if isValid && type == .Onboarding { // 이전 화면이 온보딩 화면일 경우
             guard let nickname = nickname else { return }
             UserDefaultManager.shared.nickname = nickname
+            UserDefaultManager.shared.UserStatus = true
             let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene
             let sceneDelegate = windowScene?.delegate as? SceneDelegate
             let MainSB = UIStoryboard(name: "Main", bundle: nil)
             let tabC = MainSB.instantiateViewController(identifier: "MainTabBarController") as! UITabBarController
             sceneDelegate?.window?.rootViewController = tabC
             sceneDelegate?.window?.makeKeyAndVisible()
+        } else if isValid && type == .Setting { // 이전 화면이 설정 화면일 경우
+            guard let nickname = nickname else { return }
+            UserDefaultManager.shared.nickname = nickname
+            print("Setting")
+            UserDefaultManager.shared.UserStatus = true
+            self.completionHandler?(nickname, UserDefaultManager.shared.profileImageIndex)
+            navigationController?.popViewController(animated: true)
         } else {
             print("닉네임 조건 불일치")
         }
     }
     
+    // 닉네임 텍스트필드 내용 변경 시
     @IBAction func nicknameEditingChanged(_ sender: UITextField) {
         let text = sender.text!
         
@@ -104,7 +128,6 @@ class NicknameSettingViewController: UIViewController, ViewProtocol {
         if nickname.isEmpty { return false }
         let pattern = "^.{2,9}$"
         let isMatch = nickname.range(of: pattern, options: .regularExpression) != nil
-        print(isMatch)
         return isMatch
 //        let pred = NSPredicate(format: "SELF MATCHES %@", pattern)
 //        print(pred.evaluate(with: nickname))
@@ -125,12 +148,11 @@ class NicknameSettingViewController: UIViewController, ViewProtocol {
         if nickname.isEmpty { return false }
         let pattern = "^[^0-9]*$"
         let isMatch = nickname.range(of: pattern, options: .regularExpression) == nil
-        print(isMatch)
         return isMatch
     }
     
     func configureView() {
-        navigationItem.title = "프로필 설정"
+        navigationItem.title = (type == .Onboarding) ? "프로필 설정" : "프로필 수정"
         navigationItem.hidesBackButton = true
         let backItem = UIBarButtonItem(image: ImageStyle.back, style: .plain, target: self, action: #selector(popView))
         navigationItem.leftBarButtonItem = backItem
@@ -138,13 +160,14 @@ class NicknameSettingViewController: UIViewController, ViewProtocol {
     
     // pop - 시작 화면으로
     @objc func popView() {
-        selectedImage = nil
+        selectedImageIndex = nil
         nickname = nil
         navigationController?.popViewController(animated: true)
     }
     
     // 뷰 디자인
     func designViews() {
+        navigationController?.setupBarAppearance()
         view.backgroundColor = ColorStyle.backgroundColor
         profileImageView.isUserInteractionEnabled = true
         profileImageView.design(image: nil,
@@ -165,8 +188,8 @@ class NicknameSettingViewController: UIViewController, ViewProtocol {
     }
     
     // 랜덤으로 프로필 이미지 가져오기
-    func getRandomImage() -> UIImage {
-        return profileImages.randomElement()!
+    func getRandomImageIndex() -> Int {
+        return .random(in: 0...profileList.count - 1)
     }
 
 }
