@@ -17,6 +17,8 @@ class UserDefaultManager {
     enum UDKey: String {
         case UserStatus
         case nickname
+        case profileImageIndex
+        case likeCount
     }
     
     let ud = UserDefaults.standard
@@ -29,6 +31,16 @@ class UserDefaultManager {
     var nickname: String {
         get { ud.string(forKey: UDKey.nickname.rawValue) ?? "" }
         set { ud.set(newValue, forKey: UDKey.nickname.rawValue) }
+    }
+    
+    var profileImageIndex: Int {
+        get { ud.integer(forKey: UDKey.profileImageIndex.rawValue) }
+        set { ud.set(newValue, forKey: UDKey.profileImageIndex.rawValue) }
+    }
+    
+    var likeCount: Int {
+        get { ud.integer(forKey: UDKey.likeCount.rawValue) }
+        set { ud.set(newValue, forKey: UDKey.likeCount.rawValue) }
     }
 }
 

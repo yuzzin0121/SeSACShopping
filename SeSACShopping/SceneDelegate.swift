@@ -14,7 +14,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         
-        UserDefaultManager.shared.UserStatus = false
         let value = UserDefaultManager.shared.UserStatus
         
         if value == false {
@@ -29,7 +28,13 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             window?.rootViewController = nav
             window?.makeKeyAndVisible()
         } else {
-            print("아님")
+            guard let scene = (scene as? UIWindowScene) else { return }
+            window = UIWindow(windowScene: scene)
+            
+            let MainSB = UIStoryboard(name: "Main", bundle: nil)
+            let tabBarC = MainSB.instantiateViewController(withIdentifier: "MainTabBarController") as! UITabBarController
+            window?.rootViewController = tabBarC
+            window?.makeKeyAndVisible()
         }
     }
 

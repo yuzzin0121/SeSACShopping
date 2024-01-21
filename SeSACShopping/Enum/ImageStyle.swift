@@ -9,8 +9,11 @@ import UIKit
 
 enum ImageStyle {
     static let onboarding = UIImage(named: "onboarding")!
-    static let camera = UIImage(named: "camera")
-    static let back = UIImage(systemName: "chevron.left")
+    static let camera = UIImage(named: "camera")!
+    static let back = UIImage(systemName: "chevron.left")!
+    static let search = UIImage(systemName: "magnifyingglass")!
+    static let person = UIImage(systemName: "person")
+    static let empty = UIImage(named: "empty")!
     static let profile1 = UIImage(named: "profile1")!
     static let profile2 = UIImage(named: "profile2")!
     static let profile3 = UIImage(named: "profile3")!
