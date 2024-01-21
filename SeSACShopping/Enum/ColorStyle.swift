@@ -11,4 +11,5 @@ enum ColorStyle {
     static let pointColor = UIColor(named: "pointColor")!
     static let textColor = UIColor(named: "textColor")!
     static let backgroundColor = UIColor(named: "backgroundColor")!
+    static let deepDarkGray = UIColor(named: "deepDartGray")!
 }

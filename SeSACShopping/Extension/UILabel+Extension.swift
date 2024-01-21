@@ -8,7 +8,7 @@
 import UIKit
 
 extension UILabel {
-    func design(text: String = "", textColor: UIColor = .black, font: UIFont = .systemFont(ofSize: 14),  textAlignment: NSTextAlignment = .left, numberOfLines: Int = 1) {
+    func design(text: String = "", textColor: UIColor = ColorStyle.textColor, font: UIFont = .systemFont(ofSize: 14),  textAlignment: NSTextAlignment = .left, numberOfLines: Int = 1) {
         self.text = text
         self.textColor = textColor
         self.font = font
@@ -17,7 +17,7 @@ extension UILabel {
     }
     
     // keyword에 해당하는 글자만 색깔 변경
-    func changeTextColor(keyword: String?, color: UIColor = .red) {
+    func changeTextColor(keyword: String?, color: UIColor = ColorStyle.pointColor) {
         guard let keyword = keyword else { return }
         
         let attributeString = NSMutableAttributedString(string: self.text!)

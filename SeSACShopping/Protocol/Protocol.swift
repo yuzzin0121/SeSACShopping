@@ -11,7 +11,7 @@ protocol ReuseProtocol {
     static var identifier: String { get }
 }
 
-protocol TableViewCellProtocol {
+protocol CellProtocol {
     func configureCell(item: Any)
 }
 
