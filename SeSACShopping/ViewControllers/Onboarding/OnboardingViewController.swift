@@ -26,6 +26,7 @@ class OnboardingViewController: UIViewController {
         print("시작 버튼 클릭")
         let MainSB = UIStoryboard(name: "Main", bundle: nil)
         let nicknameSettingVC = MainSB.instantiateViewController(withIdentifier: NicknameSettingViewController.identifier) as! NicknameSettingViewController
+        nicknameSettingVC.type = .Onboarding
         
         navigationController?.pushViewController(nicknameSettingVC, animated: true)
     }
