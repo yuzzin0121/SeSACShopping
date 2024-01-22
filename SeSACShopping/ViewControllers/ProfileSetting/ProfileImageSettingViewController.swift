@@ -13,8 +13,10 @@ class ProfileImageSettingViewController: UIViewController, ViewProtocol {
     var selectedProfileImageIndex: Int?
     var type: Type = .Onboarding
     
-    var profileList: [Profile] = ProfileImage.profileList
+    var profileList: [Profile] = ProfileImage.profileList   // 프로필 사진들
+    var completionHandler: ((Int) -> Void)?
 
+    // MARK: - viewDidLoad()
     override func viewDidLoad() {
         super.viewDidLoad()
         configureView()
@@ -22,14 +24,26 @@ class ProfileImageSettingViewController: UIViewController, ViewProtocol {
         configureCollectionView()
     }
     
+    // MARK: - viewWillAppear()
     override func viewWillAppear(_ animated: Bool) {
         navigationItem.title = (type == .Onboarding) ? "프로필 설정" : "프로필 수정"
-        selectedProfileImageIndex = UserDefaultManager.shared.profileImageIndex
+    
         guard let selectedProfileImageIndex else { return }
         profileList[selectedProfileImageIndex].isSelected = true
         selectedProfileImageView.image = profileList[selectedProfileImageIndex].profileImage
     }
     
+    // pop - 시작 화면으로
+    @objc func popView() {
+        if let selectedProfileImageIndex {
+            completionHandler!(selectedProfileImageIndex)
+        }
+        navigationController?.popViewController(animated: true)
+    }
+    
+    // MARK: - 디자인
+    
+    // CollectionView 설정
     func configureCollectionView() {
         profileImageCollectionView.delegate = self
         profileImageCollectionView.dataSource = self
@@ -42,12 +56,11 @@ class ProfileImageSettingViewController: UIViewController, ViewProtocol {
         
         flowLayout.itemSize = CGSize(width: cellWidth, height: cellWidth)
         flowLayout.sectionInset = UIEdgeInsets(top: 12, left: 12, bottom: 12, right: 12)
-//        flowLayout.minimumLineSpacing = spacing
-//        flowLayout.minimumInteritemSpacing = spacing
         flowLayout.scrollDirection = .vertical
         profileImageCollectionView.collectionViewLayout = flowLayout
     }
-
+    
+    // navigationItem 설정
     func configureView() {
         navigationItem.title = "프로필 설정"
         navigationItem.hidesBackButton = true
@@ -55,12 +68,7 @@ class ProfileImageSettingViewController: UIViewController, ViewProtocol {
         navigationItem.leftBarButtonItem = backItem
     }
     
-    // pop - 시작 화면으로
-    @objc func popView() {
-        UserDefaultManager.shared.profileImageIndex = selectedProfileImageIndex ?? .random(in: 0...profileList.count - 1)
-        navigationController?.popViewController(animated: true)
-    }
-    
+    // 뷰 디자인
     func designViews() {
         navigationController?.setupBarAppearance()
         view.backgroundColor = ColorStyle.backgroundColor
@@ -74,6 +82,7 @@ class ProfileImageSettingViewController: UIViewController, ViewProtocol {
     }
 }
 
+// 프로필 사진 리스트
 extension ProfileImageSettingViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         profileList.count
@@ -83,8 +92,6 @@ extension ProfileImageSettingViewController: UICollectionViewDelegate, UICollect
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ProfileImageCollectionViewCell.identifier, for: indexPath) as! ProfileImageCollectionViewCell
         
         cell.configureCell(item: profileList[indexPath.row])
-        
-        
         
         return cell
     }

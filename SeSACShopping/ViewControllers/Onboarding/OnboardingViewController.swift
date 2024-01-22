@@ -23,7 +23,6 @@ class OnboardingViewController: UIViewController {
     
     // 시작하기 버튼 클릭 시
     @IBAction func startButtonClicked(_ sender: UIButton) {
-        print("시작 버튼 클릭")
         let MainSB = UIStoryboard(name: "Main", bundle: nil)
         let nicknameSettingVC = MainSB.instantiateViewController(withIdentifier: NicknameSettingViewController.identifier) as! NicknameSettingViewController
         nicknameSettingVC.type = .Onboarding

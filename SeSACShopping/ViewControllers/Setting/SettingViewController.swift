@@ -27,7 +27,7 @@ class SettingViewController: UIViewController, ViewProtocol {
     
     var profileImageIndex: Int? {
         didSet {
-            profileImageView.image = profileImages[profileImageIndex ?? 0].profileImage
+            profileImageView.image = profileImages[UserDefaultManager.shared.profileImageIndex].profileImage
         }
     }
 
@@ -39,14 +39,23 @@ class SettingViewController: UIViewController, ViewProtocol {
         configureTableView()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(true)
+        
+        let likeCount = UserDefaultManager.shared.likeCount
+        likeCountLabel.design(text: "\(likeCount)개의 상품을 좋아하고 있어요!", font: .boldSystemFont(ofSize: 15))
+        likeCountLabel.changeTextColor(keyword: "\(likeCount)개의 상품")
+        
+        profileImageView.image = profileImages[UserDefaultManager.shared.profileImageIndex].profileImage
+        nicknameLabel.text = "떠나고싶은 \(UserDefaultManager.shared.nickname)"
+    }
+    
     @IBAction func profileViewDidTap(_ sender: UITapGestureRecognizer) {
         let MainSB = UIStoryboard(name: "Main", bundle: nil)
         let NicknameSettingVC = MainSB.instantiateViewController(withIdentifier: NicknameSettingViewController.identifier) as! NicknameSettingViewController
         NicknameSettingVC.type = .Setting
-        NicknameSettingVC.completionHandler = { nickname, index in
-            self.nickname = nickname
-            self.profileImageIndex = index
-        }
+        NicknameSettingVC.nickname = UserDefaultManager.shared.nickname
+        NicknameSettingVC.selectedImageIndex = UserDefaultManager.shared.profileImageIndex
         navigationController?.pushViewController(NicknameSettingVC, animated: true)
     }
     
@@ -90,10 +99,10 @@ class SettingViewController: UIViewController, ViewProtocol {
     
     func reset() {
         let shared = UserDefaultManager.shared
-        shared.ud.removeObject(forKey: UserDefaultManager.UDKey.UserStatus.rawValue)
-        shared.ud.removeObject(forKey: UserDefaultManager.UDKey.nickname.rawValue)
-        shared.ud.removeObject(forKey: UserDefaultManager.UDKey.profileImageIndex.rawValue)
-        shared.ud.removeObject(forKey: UserDefaultManager.UDKey.likeCount.rawValue)
+        let udKeys = UserDefaultManager.UDKey.allCases
+        udKeys.forEach {
+            shared.ud.removeObject(forKey: $0.rawValue)
+        }
         
         let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene
         let sceneDelegate = windowScene?.delegate as? SceneDelegate

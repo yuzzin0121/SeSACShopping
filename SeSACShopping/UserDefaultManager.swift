@@ -14,11 +14,13 @@ class UserDefaultManager {
     
     private init() { }
     
-    enum UDKey: String {
+    enum UDKey: String, CaseIterable {
         case UserStatus
         case nickname
         case profileImageIndex
+        case searchKeywords
         case likeCount
+        case likeProductIds
     }
     
     let ud = UserDefaults.standard
@@ -38,9 +40,19 @@ class UserDefaultManager {
         set { ud.set(newValue, forKey: UDKey.profileImageIndex.rawValue) }
     }
     
+    var searchKeywords: [String] {
+        get { ud.array(forKey: UDKey.searchKeywords.rawValue) as? [String] ?? [] }
+        set { ud.set(newValue, forKey: UDKey.searchKeywords.rawValue) }
+    }
+    
     var likeCount: Int {
         get { ud.integer(forKey: UDKey.likeCount.rawValue) }
         set { ud.set(newValue, forKey: UDKey.likeCount.rawValue) }
+    }
+    
+    var likeProductIds: [String] {
+        get { ud.array(forKey: UDKey.likeProductIds.rawValue) as? [String] ?? [] }
+        set { ud.set(newValue, forKey: UDKey.likeProductIds.rawValue) }
     }
 }
 
