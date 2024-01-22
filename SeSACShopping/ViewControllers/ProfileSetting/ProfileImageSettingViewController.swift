@@ -11,10 +11,10 @@ class ProfileImageSettingViewController: UIViewController, ViewProtocol {
     @IBOutlet weak var selectedProfileImageView: UIImageView!
     @IBOutlet weak var profileImageCollectionView: UICollectionView!
     var selectedProfileImageIndex: Int?
-    var type: Type = .Onboarding
+    var type: Type = .Onboarding    
     
     var profileList: [Profile] = ProfileImage.profileList   // 프로필 사진들
-    var completionHandler: ((Int) -> Void)?
+    var completionHandler: ((Int) -> Void)? // 이미지 전달할 핸들러
 
     // MARK: - viewDidLoad()
     override func viewDidLoad() {

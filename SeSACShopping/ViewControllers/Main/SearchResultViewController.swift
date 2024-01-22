@@ -7,44 +7,8 @@
 
 import UIKit
 
-/*
-1. 네비게이션 타이틀 영역에 검색 키워드를 표현한다.
- - 검색 키워드는 1) 메인 화면 서치바에 입력한 텍스트 or 2) 최근 검색 리스트에서 클릭한 키워드가 전달된다.
-2. 검색 데이터는 네이버 쇼핑 API를 활용한다.
- - 데이터는 30개를 기준으로 페이지네이션 처리를 한다.
- - API 쿼리를 활용해 정렬 기능을 구현한다.
- - 상품 전체 갯수를 total를 통해 보여준다.
- 3. 셀에서는 image, mallName, title, lprice 정보를 확인할 수 있으며, title은 2줄까지 보여진다.
- 4. 사용자가 상품마다 좋아요를 설정하거나 취소할 수 있다.
- 5. 셀 선택 시 [상품 상세 화면]으로 이동한다.
- */
+
 // 검색 결과 화면
-
-enum Filter: Int, CaseIterable {
-    case accuracy
-    case dateOrder
-    case hPriceOrder
-    case lPriceOrder
-    
-    var title: String {
-        switch self {
-        case .accuracy: return "정확도"
-        case .dateOrder: return "날짜순"
-        case .hPriceOrder: return "가격높은순"
-        case .lPriceOrder: return "가격낮은순"
-        }
-    }
-    
-    var sortValue: String { // 파라미터 key(sort)에 대한 값
-        switch self {
-        case .accuracy: return "sim"
-        case .dateOrder: return "date"
-        case .hPriceOrder: return "dsc"
-        case .lPriceOrder: return "asc"
-        }
-    }
-}
-
 class SearchResultViewController: UIViewController, ViewProtocol {
     @IBOutlet weak var searchCountLabel: UILabel!
     
@@ -56,24 +20,24 @@ class SearchResultViewController: UIViewController, ViewProtocol {
     lazy var filterButtons: [UIButton] = [accuracyButton, dateOrderButton, hPriceOrderButton, lPriceOrderButton]
     @IBOutlet weak var productCollectionView: UICollectionView!
     
-    var searchKeyword: String?
-    let filterList: [Filter] = Filter.allCases
+    var searchKeyword: String?  // 검색 키워드
+    let filterList: [Filter] = Filter.allCases  // 필터 리스트
     let productAPIManager = ProductAPIManager()
-    var productList: [Product] = [] {
+    var productList: [Product] = [] {   // 상품 리스트
         didSet {
             productCollectionView.reloadData()
         }
     }
-    var searchCount: Int = 0 {
+    var searchCount: Int = 0 {  // 검색 결과 개수
         didSet {
             let count = searchCount.convertPriceString()
             searchCountLabel.text = "\(count) 개의 검색 결과"
         }
     }
 
-    var selectedIndex = 0
+    var selectedIndex = 0   // 필터 버튼 선택된 인덱스
     var isEnd = false
-    var start = 0
+    var start = 1
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -81,6 +45,7 @@ class SearchResultViewController: UIViewController, ViewProtocol {
         designViews()
         configureCollectionView()
         
+        // 상품 검색
         productAPIManager.callRequest(keyword: searchKeyword ?? "", sort: filterList[0].sortValue) { productsInfo in
             self.searchCount = productsInfo.total
             let likeIds = UserDefaultManager.shared.likeProductIds
@@ -94,12 +59,7 @@ class SearchResultViewController: UIViewController, ViewProtocol {
         }
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(true)
-        
-        
-    }
-    
+    // 필터 버튼 클릭했을 때
     @IBAction func filterButtonClicked(_ sender: UIButton) {
         filterButtons[selectedIndex].backgroundColor = ColorStyle.backgroundColor
         filterButtons[selectedIndex].setTitleColor(ColorStyle.textColor, for: .normal)
@@ -185,6 +145,7 @@ class SearchResultViewController: UIViewController, ViewProtocol {
         filterButtons[0].tag = 0
     }
     
+    // 좋아요 버튼 클릭했을 때
     @objc func likeButtonClicked(sender: UIButton) {
         productList[sender.tag].isLike.toggle()
         let isLike = productList[sender.tag].isLike

@@ -19,7 +19,9 @@ struct ProductAPIManager {
             "X-Naver-Client-Secret": APIKey.clientSecret
         ]
         
-        AF.request(url, method: .get, headers: headers)
+        AF.request(url, 
+                   method: .get,
+                   headers: headers)
             .responseDecodable(of: ProductsInfo.self) { response in
                 switch response.result {
                 case .success(let success):

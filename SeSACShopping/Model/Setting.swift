@@ -7,6 +7,7 @@
 
 import Foundation
 
+// 설정 테이블뷰에 들어갈 데이터
 enum Setting: Int, CaseIterable {
     case notice
     case qna

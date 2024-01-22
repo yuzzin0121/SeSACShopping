@@ -9,14 +9,6 @@ import UIKit
 
 // 메인 화면
 class MainViewController: UIViewController, ViewProtocol {
-    let searchController = UISearchController(searchResultsController: nil)
-    
-    var nickname: String? {
-        didSet {
-            navigationItem.title = "떠나고싶은 \(nickname!)님의 새싹쇼핑"
-        }
-    }
-    
     @IBOutlet weak var noSearchWordBackgroundView: UIView!
     @IBOutlet weak var noSearchWordImageView: UIImageView!
     @IBOutlet weak var noSearchWordLabel: UILabel!
@@ -26,12 +18,15 @@ class MainViewController: UIViewController, ViewProtocol {
     @IBOutlet weak var searchKeywordTableView: UITableView!
     var recentSearchList: [String] = [] {
         didSet {
-            if recentSearchList.isEmpty {
-                noSearchWordBackgroundView.alpha = 1
-                searchKeywordTableView.alpha = 0
-                tableTopView.alpha = 0
-            }
+            isEmpty(recentSearchList.isEmpty)
             searchKeywordTableView.reloadData()
+        }
+    }
+    let searchController = UISearchController(searchResultsController: nil)
+    
+    var nickname: String? {
+        didSet {
+            navigationItem.title = "떠나고싶은 \(nickname!)님의 새싹쇼핑"
         }
     }
 
@@ -50,20 +45,26 @@ class MainViewController: UIViewController, ViewProtocol {
         super.viewWillAppear(true)
         nickname = UserDefaultManager.shared.nickname
         recentSearchList = UserDefaultManager.shared.searchKeywords
-        if recentSearchList.isEmpty {   // 최근 검색어가 없을 경우
+        isEmpty(recentSearchList.isEmpty)
+    }
+    
+    // 모두 지우기 버튼 클릭했을 때
+    @IBAction func removeAllButtonClicked(_ sender: UIButton) {
+        recentSearchList.removeAll()
+        UserDefaultManager.shared.searchKeywords = recentSearchList
+    }
+    
+    // 최근 검색어 존재 유무에 따라 UI 설정
+    func isEmpty(_ isEmpty: Bool) {
+        if isEmpty == true {
             noSearchWordBackgroundView.alpha = 1
             searchKeywordTableView.alpha = 0
-            
+            tableTopView.alpha = 0
         } else {
             noSearchWordBackgroundView.alpha = 0
             searchKeywordTableView.alpha = 1
             tableTopView.alpha = 1
         }
-    }
-    
-    @IBAction func removeAllButtonClicked(_ sender: UIButton) {
-        recentSearchList.removeAll()
-        UserDefaultManager.shared.searchKeywords = recentSearchList
     }
     
     func configureTableView() {

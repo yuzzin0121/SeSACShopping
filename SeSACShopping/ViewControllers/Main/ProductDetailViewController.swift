@@ -21,27 +21,61 @@ import WebKit
 class ProductDetailViewController: UIViewController, ViewProtocol {
     @IBOutlet weak var webView: WKWebView!
     
-    var productTitle: String?
-    var link: String?  = nil
-    var productId: String? = nil
-    var isLike: Bool? = false {
+    var productTitle: String?   // 상품 타이틀
+    var productId: String? = nil    // 상품 id
+    var heartImage: UIImage = ImageStyle.like
+    var isLike: Bool? = false { // 좋아요인지
         didSet {
             heartImage = isLike == true ? ImageStyle.likeFill : ImageStyle.like
             navigationItem.rightBarButtonItem?.image = heartImage
         }
     }
-    var heartImage: UIImage = ImageStyle.like
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
         configureView()
         designViews()
         showWebView()
-        
-        
     }
-
+    
+    // 웹뷰 띄우기
+    func showWebView() {
+        if let productId {
+            if let url = URL(string: "https://msearch.shopping.naver.com/product/\(productId)") {
+                let request = URLRequest(url: url)
+                webView.load(request)
+            }
+        }
+    }
+    
+    // 좋아요 버튼 클릭했을 때
+    @objc func like() {
+        isLike?.toggle()    // 좋아요 상태 변경
+        guard let productId else { return }
+        var productIds = UserDefaultManager.shared.likeProductIds   // 저장된 id들 가져오기
+        
+        if isLike == true { // 좋아요일 경우
+            productIds.append(productId)    // productID 추가
+            setLike(ids: productIds, count: productIds.count)
+        } else {    // 좋아요 아닌경우!
+            if let index = productIds.firstIndex(where: { $0 == productId }) {
+                productIds.remove(at: index)    // UserDefault에 존재하는 id이면 삭제
+                setLike(ids: productIds, count: productIds.count)
+            }
+        }
+    }
+    
+    func setLike(ids: [String], count: Int) {   // id들과 좋아요 개수 저장
+        UserDefaultManager.shared.likeProductIds = ids
+        UserDefaultManager.shared.likeCount = count
+    }
+    
+    // pop - 메인 화면으로
+    @objc func popView() {
+        navigationController?.popViewController(animated: true)
+    }
+    
     // navigationItem 디자인
     func configureView() {
         if let productTitle {
@@ -57,41 +91,7 @@ class ProductDetailViewController: UIViewController, ViewProtocol {
         navigationItem.rightBarButtonItem = heartItem
     }
     
-    func showWebView() {
-        if let productId {
-            if let url = URL(string: "https://msearch.shopping.naver.com/product/\(productId)") {
-                let request = URLRequest(url: url)
-                webView.load(request)
-            }
-        }
-    }
-    
-    @objc func like() {
-        isLike?.toggle()
-        guard let productId else { return }
-        var productIds = UserDefaultManager.shared.likeProductIds
-        
-        if isLike == true {
-            productIds.append(productId)
-            UserDefaultManager.shared.likeProductIds = productIds
-            UserDefaultManager.shared.likeCount = productIds.count
-        } else {
-            if let index = productIds.firstIndex(where: { $0 == productId }) {
-                productIds.remove(at: index)
-                UserDefaultManager.shared.likeProductIds = productIds
-                UserDefaultManager.shared.likeCount = productIds.count
-            }
-        }
-    }
-    
-    // pop - 메인 화면으로
-    @objc func popView() {
-        navigationController?.popViewController(animated: true)
-    }
-    
     func designViews() {
         view.backgroundColor = ColorStyle.backgroundColor
     }
-    
-    
 }

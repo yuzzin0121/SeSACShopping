@@ -16,21 +16,22 @@ class SettingViewController: UIViewController, ViewProtocol {
     
     @IBOutlet weak var settingTableView: UITableView!
     
-    let settingList: [Setting] = Setting.allCases
+    let settingList: [Setting] = Setting.allCases   // 설정에 보일 내용들
     let profileImages: [Profile] = ProfileImage.profileList
     
-    var nickname: String? {
+    var nickname: String? { // 사용자의 닉네임
         didSet {
             nicknameLabel.text = "떠나고싶은 \(nickname!)"
         }
     }
     
-    var profileImageIndex: Int? {
+    var profileImageIndex: Int? {   // 사용자의 프로필 사진 인덱스
         didSet {
             profileImageView.image = profileImages[UserDefaultManager.shared.profileImageIndex].profileImage
         }
     }
 
+    // MARK: - viewDidLoad()
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -39,6 +40,7 @@ class SettingViewController: UIViewController, ViewProtocol {
         configureTableView()
     }
     
+    // MARK: - viewWillAppear()
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
         
@@ -50,6 +52,7 @@ class SettingViewController: UIViewController, ViewProtocol {
         nicknameLabel.text = "떠나고싶은 \(UserDefaultManager.shared.nickname)"
     }
     
+    // 프로필 클릭했을 때
     @IBAction func profileViewDidTap(_ sender: UITapGestureRecognizer) {
         let MainSB = UIStoryboard(name: "Main", bundle: nil)
         let NicknameSettingVC = MainSB.instantiateViewController(withIdentifier: NicknameSettingViewController.identifier) as! NicknameSettingViewController
@@ -59,12 +62,14 @@ class SettingViewController: UIViewController, ViewProtocol {
         navigationController?.pushViewController(NicknameSettingVC, animated: true)
     }
     
+    // navigationItem. tabBar 디자인
     func configureView() {
         navigationItem.title = "설정"
         self.tabBarController?.tabBar.unselectedItemTintColor = .gray
         self.tabBarController?.tabBar.tintColor = ColorStyle.pointColor
     }
     
+    // TableView 설정
     func configureTableView() {
         navigationController?.setupBarAppearance()
         settingTableView.backgroundColor = ColorStyle.backgroundColor
@@ -76,6 +81,7 @@ class SettingViewController: UIViewController, ViewProtocol {
         
     }
     
+    // 뷰 디자인
     func designViews() {
         view.backgroundColor = ColorStyle.backgroundColor
         let index = UserDefaultManager.shared.profileImageIndex
@@ -97,6 +103,7 @@ class SettingViewController: UIViewController, ViewProtocol {
         
     }
     
+    // 처음으로 돌아가기 클릭 시 리셋
     func reset() {
         let shared = UserDefaultManager.shared
         let udKeys = UserDefaultManager.UDKey.allCases
@@ -109,16 +116,17 @@ class SettingViewController: UIViewController, ViewProtocol {
         let OnboardingSB = UIStoryboard(name: "Onboarding", bundle: nil)
         let OnboardingVC = OnboardingSB.instantiateViewController(identifier: OnboardingViewController.identifier) as! OnboardingViewController
         
-        let nav = UINavigationController(rootViewController: OnboardingVC)
+        let nav = UINavigationController(rootViewController: OnboardingVC)  // 온보딩 화면으로
         sceneDelegate?.window?.rootViewController = nav
         sceneDelegate?.window?.makeKeyAndVisible()
     }
     
+    // 알림 띄우기 (취소, 확인)
     func alert(title: String?, message: String?) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         
         let confirm = UIAlertAction(title: "확인", style: .destructive) { UIAlertAction in
-            self.reset()
+            self.reset()    // 확인 클릭 시 리셋
         }
         let cancelAction = UIAlertAction(title: "취소", style: .cancel)
         
@@ -145,7 +153,7 @@ extension SettingViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if indexPath.row == Setting.startBeginAgain.rawValue {
+        if indexPath.row == Setting.startBeginAgain.rawValue {  // 클릭 시 alert 띄우기
             alert(title: "처음부터 시작하기", message: "데이터를 모두 초기화하시겠습니까?")
         }
     }

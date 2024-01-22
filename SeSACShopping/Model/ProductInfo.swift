@@ -7,6 +7,7 @@
 
 import Foundation
 
+// 상품 검색 API decode 모델
 struct ProductsInfo: Decodable {
     let total: Int
     let items: [ProductItem]

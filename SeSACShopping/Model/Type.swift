@@ -7,7 +7,8 @@
 
 import Foundation
 
+// 이전 화면의 타입
 enum Type {
-    case Onboarding
-    case Setting
+    case Onboarding // 온보딩 화면
+    case Setting    // 설정 화면
 }
