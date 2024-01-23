@@ -49,13 +49,15 @@ class SearchResultViewController: UIViewController, ViewProtocol {
         productAPIManager.callRequest(keyword: searchKeyword ?? "", sort: filterList[0].sortValue) { productsInfo in
             self.searchCount = productsInfo.total
             let likeIds = UserDefaultManager.shared.likeProductIds
+            var products: [Product] = []
             for product in productsInfo.items {
                 var isLike = false
                 if likeIds.contains(product.productId) {
                     isLike = true
                 }
-                self.productList.append(Product(isLike: isLike, productItem: product))
+                products.append(Product(isLike: isLike, productItem: product))
             }
+            self.productList = products
         }
     }
     

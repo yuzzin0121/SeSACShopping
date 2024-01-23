@@ -77,6 +77,7 @@ class MainViewController: UIViewController, ViewProtocol {
         searchKeywordTableView.register(searchKeywordNib, forCellReuseIdentifier: RecentSearchTableViewCell.identifier)
     }
     
+    
     // tabbar. navigationItem 설정
     func configureView() {
         navigationController?.setupBarAppearance()
@@ -139,23 +140,42 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        print("dfsdfs")
         let keyword = recentSearchList[indexPath.row]
         if keyword == "" { return }
+        saveSearchKeyword(keyword: keyword)
         showDetailVC(keyword: keyword)
     }
+    
 }
 
 extension MainViewController: UISearchBarDelegate {
     // 검색 버튼 클릭했을 때
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        let text = searchBar.text
+        let text = searchBar.text!
         if text == "" { return }
         searchBar.text = ""
+//        view.endEditing(true)
+        searchBarCancelButtonClicked(searchBar)
+        saveSearchKeyword(keyword: text)
+        showDetailVC(keyword: text)
+    }
+    
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.text = ""
+    }
+    
+    func saveSearchKeyword(keyword: String) {
         var keywordArray = UserDefaultManager.shared.searchKeywords
-        keywordArray.insert(text!, at: 0)
-        UserDefaultManager.shared.searchKeywords = keywordArray
         
-        showDetailVC(keyword: text!)
+        if let index = keywordArray.firstIndex(where: { $0 == keyword }) {
+            keywordArray.remove(at: index)
+            keywordArray.insert(keyword, at: 0)
+        } else {
+            keywordArray.insert(keyword, at: 0)
+        }
+        
+        UserDefaultManager.shared.searchKeywords = keywordArray
     }
 }
 

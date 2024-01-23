@@ -120,20 +120,6 @@ class SettingViewController: UIViewController, ViewProtocol {
         sceneDelegate?.window?.rootViewController = nav
         sceneDelegate?.window?.makeKeyAndVisible()
     }
-    
-    // 알림 띄우기 (취소, 확인)
-    func alert(title: String?, message: String?) {
-        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        
-        let confirm = UIAlertAction(title: "확인", style: .destructive) { UIAlertAction in
-            self.reset()    // 확인 클릭 시 리셋
-        }
-        let cancelAction = UIAlertAction(title: "취소", style: .cancel)
-        
-        alert.addAction(confirm)
-        alert.addAction(cancelAction)
-        present(alert, animated: true)
-    }
 }
 
 extension SettingViewController: UITableViewDelegate, UITableViewDataSource {
@@ -154,7 +140,9 @@ extension SettingViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.row == Setting.startBeginAgain.rawValue {  // 클릭 시 alert 띄우기
-            alert(title: "처음부터 시작하기", message: "데이터를 모두 초기화하시겠습니까?")
+            showAlert(title: "처음부터 시작하기", message: "데이터를 모두 초기화하시겠습니까?", buttonTitle: "확인") {
+                self.reset()
+            }
         }
     }
 }

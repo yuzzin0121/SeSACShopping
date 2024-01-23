@@ -197,6 +197,7 @@
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="VCl-xa-MNU"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <gestureRecognizers/>
                         <constraints>
                             <constraint firstItem="ZpS-RC-Mx6" firstAttribute="centerY" secondItem="YIa-JU-vKc" secondAttribute="centerY" id="GcR-Sr-um8"/>
                             <constraint firstItem="qjt-UN-amF" firstAttribute="leading" secondItem="VCl-xa-MNU" secondAttribute="leading" id="PAb-SK-BSY"/>
