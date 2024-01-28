@@ -8,6 +8,7 @@
 import UIKit
 
 class ProfileImageSettingViewController: UIViewController, ViewProtocol {
+    
     @IBOutlet weak var selectedProfileImageView: UIImageView!
     @IBOutlet weak var profileImageCollectionView: UICollectionView!
     var selectedProfileImageIndex: Int?
@@ -20,7 +21,7 @@ class ProfileImageSettingViewController: UIViewController, ViewProtocol {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureView()
-        designViews() 
+        configureNavigationItem()
         configureCollectionView()
     }
     
@@ -61,15 +62,23 @@ class ProfileImageSettingViewController: UIViewController, ViewProtocol {
     }
     
     // navigationItem 설정
-    func configureView() {
+    func configureNavigationItem() {
         navigationItem.title = "프로필 설정"
         navigationItem.hidesBackButton = true
         let backItem = UIBarButtonItem(image: ImageStyle.back, style: .plain, target: self, action: #selector(popView))
         navigationItem.leftBarButtonItem = backItem
     }
     
+    func configureHierarchy() {
+        
+    }
+    
+    func setupContstraints() {
+        
+    }
+    
     // 뷰 디자인
-    func designViews() {
+    func configureView() {
         navigationController?.setupBarAppearance()
         view.backgroundColor = ColorStyle.backgroundColor
         

@@ -7,7 +7,8 @@
 
 import Foundation
 
-protocol ViewProtocol {
+protocol ViewProtocol: AnyObject {
+    func configureHierarchy()
     func configureView()
-    func designViews()
+    func setupContstraints()
 }

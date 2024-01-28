@@ -9,6 +9,7 @@ import UIKit
 
 // 설정 화면
 class SettingViewController: UIViewController, ViewProtocol {
+    
     @IBOutlet weak var profileBackgroundView: UIView!
     @IBOutlet weak var profileImageView: UIImageView!
     @IBOutlet weak var nicknameLabel: UILabel!
@@ -36,7 +37,7 @@ class SettingViewController: UIViewController, ViewProtocol {
         super.viewDidLoad()
 
         configureView()
-        designViews()
+        configureNavigationItem()
         configureTableView()
     }
     
@@ -63,7 +64,7 @@ class SettingViewController: UIViewController, ViewProtocol {
     }
     
     // navigationItem. tabBar 디자인
-    func configureView() {
+    func configureNavigationItem() {
         navigationItem.title = "설정"
         self.tabBarController?.tabBar.unselectedItemTintColor = .gray
         self.tabBarController?.tabBar.tintColor = ColorStyle.pointColor
@@ -81,8 +82,16 @@ class SettingViewController: UIViewController, ViewProtocol {
         
     }
     
+    func configureHierarchy() {
+        
+    }
+    
+    func setupContstraints() {
+        
+    }
+    
     // 뷰 디자인
-    func designViews() {
+    func configureView() {
         view.backgroundColor = ColorStyle.backgroundColor
         let index = UserDefaultManager.shared.profileImageIndex
         profileBackgroundView.backgroundColor = ColorStyle.deepDarkGray

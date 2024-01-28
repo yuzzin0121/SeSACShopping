@@ -39,3 +39,11 @@ extension UIViewController: ReuseProtocol {
         }
     }
 }
+
+extension UITableViewHeaderFooterView: ReuseProtocol {
+    static var identifier: String {
+        get {
+            String(describing: self)
+        }
+    }
+}

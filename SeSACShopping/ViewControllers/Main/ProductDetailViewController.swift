@@ -19,6 +19,7 @@ import WebKit
 
 // 상품 상세 화면
 class ProductDetailViewController: UIViewController, ViewProtocol {
+    
     @IBOutlet weak var webView: WKWebView!
     
     var productTitle: String?   // 상품 타이틀
@@ -35,7 +36,7 @@ class ProductDetailViewController: UIViewController, ViewProtocol {
         super.viewDidLoad()
 
         configureView()
-        designViews()
+        configureNavigationItem()
         showWebView()
     }
     
@@ -77,7 +78,7 @@ class ProductDetailViewController: UIViewController, ViewProtocol {
     }
     
     // navigationItem 디자인
-    func configureView() {
+    func configureNavigationItem() {
         if let productTitle {
             navigationItem.title = "\(productTitle)"
         } else {
@@ -91,7 +92,15 @@ class ProductDetailViewController: UIViewController, ViewProtocol {
         navigationItem.rightBarButtonItem = heartItem
     }
     
-    func designViews() {
+    func configureHierarchy() {
+        
+    }
+    
+    func setupContstraints() {
+        
+    }
+    
+    func configureView() {
         view.backgroundColor = ColorStyle.backgroundColor
     }
 }

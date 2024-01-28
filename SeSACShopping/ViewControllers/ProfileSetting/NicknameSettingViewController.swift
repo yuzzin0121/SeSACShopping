@@ -10,6 +10,7 @@ import UIKit
 // 프로필 닉네임 설정 화면
 
 class NicknameSettingViewController: UIViewController, ViewProtocol {
+    
     @IBOutlet weak var profileImageView: UIImageView!
     @IBOutlet weak var cameraImageView: UIImageView!
     @IBOutlet weak var nicknameTextField: UITextField!
@@ -27,8 +28,8 @@ class NicknameSettingViewController: UIViewController, ViewProtocol {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        configureNavigationItem()
         configureView()
-        designViews()
         if type == .Onboarding {    // 이전 화면이 온보딩 화면일 경우
             selectedImageIndex = getRandomImageIndex()  // 랜덤 프로필 이미지 설정
             if let selectedImageIndex {
@@ -146,7 +147,7 @@ class NicknameSettingViewController: UIViewController, ViewProtocol {
     }
     
     
-    func configureView() {
+    func configureNavigationItem() {
         navigationItem.title = (type == .Onboarding) ? "프로필 설정" : "프로필 수정"
         navigationItem.hidesBackButton = true
         let backItem = UIBarButtonItem(image: ImageStyle.back, style: .plain, target: self, action: #selector(popView))
@@ -165,9 +166,12 @@ class NicknameSettingViewController: UIViewController, ViewProtocol {
         }
         navigationController?.popViewController(animated: true)
     }
+  
+    func configureHierarchy() {
+        
+    }
     
-    // 뷰 디자인
-    func designViews() {
+    func configureView() {
         navigationController?.setupBarAppearance()
         view.backgroundColor = ColorStyle.backgroundColor
         profileImageView.isUserInteractionEnabled = true
@@ -185,6 +189,9 @@ class NicknameSettingViewController: UIViewController, ViewProtocol {
         
         finishButton.design(title: "완료",
                             cornerRadius: 8)
+    }
+    
+    func setupContstraints() {
         
     }
     

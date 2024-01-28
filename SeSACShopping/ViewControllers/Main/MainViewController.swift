@@ -6,16 +6,14 @@
 //
 
 import UIKit
+import SnapKit
 
 // 메인 화면
 class MainViewController: UIViewController, ViewProtocol {
-    @IBOutlet weak var noSearchWordBackgroundView: UIView!
-    @IBOutlet weak var noSearchWordImageView: UIImageView!
-    @IBOutlet weak var noSearchWordLabel: UILabel!
-    @IBOutlet weak var recentSearchLabel: UILabel!
-    @IBOutlet weak var removeAllButton: UIButton!
-    @IBOutlet weak var tableTopView: UIView!
-    @IBOutlet weak var searchKeywordTableView: UITableView!
+    let noSearchWordBackgroundView = UIView()
+    let noSearchWordImageView = UIImageView()
+    let noSearchWordLabel = UILabel()
+    let searchKeywordTableView = UITableView(frame: .zero, style: .grouped)
     var recentSearchList: [String] = [] {
         didSet {
             isEmpty(recentSearchList.isEmpty)
@@ -34,9 +32,11 @@ class MainViewController: UIViewController, ViewProtocol {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        configureView()
+        configureNavigationItem()
         configureSearchBar()
-        designViews()
+        configureHierarchy()
+        setupContstraints()
+        configureView()
         configureTableView()
     }
     
@@ -49,7 +49,7 @@ class MainViewController: UIViewController, ViewProtocol {
     }
     
     // 모두 지우기 버튼 클릭했을 때
-    @IBAction func removeAllButtonClicked(_ sender: UIButton) {
+    @objc func removeAllButtonClicked() {
         recentSearchList.removeAll()
         UserDefaultManager.shared.searchKeywords = recentSearchList
     }
@@ -59,11 +59,9 @@ class MainViewController: UIViewController, ViewProtocol {
         if isEmpty == true {
             noSearchWordBackgroundView.alpha = 1
             searchKeywordTableView.alpha = 0
-            tableTopView.alpha = 0
         } else {
             noSearchWordBackgroundView.alpha = 0
             searchKeywordTableView.alpha = 1
-            tableTopView.alpha = 1
         }
     }
     
@@ -72,14 +70,14 @@ class MainViewController: UIViewController, ViewProtocol {
         searchKeywordTableView.delegate = self
         searchKeywordTableView.dataSource = self
         searchKeywordTableView.rowHeight = 52
-        
-        let searchKeywordNib = UINib(nibName: RecentSearchTableViewCell.identifier, bundle: nil)
-        searchKeywordTableView.register(searchKeywordNib, forCellReuseIdentifier: RecentSearchTableViewCell.identifier)
+        searchKeywordTableView.sectionHeaderTopPadding = 0
+        searchKeywordTableView.register(RecentKeywordHeaderView.self, forHeaderFooterViewReuseIdentifier: RecentKeywordHeaderView.identifier)
+        searchKeywordTableView.register(RecentSearchTableViewCell.self, forCellReuseIdentifier: RecentSearchTableViewCell.identifier)
     }
     
     
     // tabbar. navigationItem 설정
-    func configureView() {
+    func configureNavigationItem() {
         navigationController?.setupBarAppearance()
         let nickname = UserDefaultManager.shared.nickname
         self.navigationItem.title = "떠나고싶은 \(nickname)님의 새싹쇼핑"
@@ -99,17 +97,44 @@ class MainViewController: UIViewController, ViewProtocol {
         searchController.searchBar.searchTextField.backgroundColor = ColorStyle.deepDarkGray
     }
     
-    // 뷰 디자인
-    func designViews() {
+    func configureHierarchy() {
+        [noSearchWordBackgroundView, searchKeywordTableView].forEach {
+            view.addSubview($0)
+        }
+        
+        [noSearchWordImageView, noSearchWordLabel].forEach {
+            noSearchWordBackgroundView.addSubview($0)
+        }
+    }
+    
+    func configureView() {
         navigationController?.setupBarAppearance()
         view.backgroundColor = ColorStyle.backgroundColor
         noSearchWordBackgroundView.backgroundColor = ColorStyle.backgroundColor
         noSearchWordImageView.design(image: ImageStyle.empty, contentMode: .scaleAspectFit)
         noSearchWordLabel.design(text: "최근 검색어가 없어요", font: .boldSystemFont(ofSize: 17), textAlignment: .center)
-        tableTopView.backgroundColor = ColorStyle.backgroundColor
-        recentSearchLabel.design(text: "최근 검색", font: .boldSystemFont(ofSize: 14))
-        removeAllButton.design(title: "모두 지우기", font: .boldSystemFont(ofSize: 14), titleColor: ColorStyle.pointColor, backgroundColor: .clear)
     }
+    
+    func setupContstraints() {
+        noSearchWordBackgroundView.snp.makeConstraints { make in
+            make.center.equalToSuperview()
+        }
+        
+        noSearchWordImageView.snp.makeConstraints { make in
+            make.top.horizontalEdges.equalTo(noSearchWordBackgroundView).inset(8)
+            make.height.equalTo(268)
+        }
+        
+        noSearchWordLabel.snp.makeConstraints { make in
+            make.top.equalTo(noSearchWordImageView.snp.bottom).offset(8)
+            make.horizontalEdges.bottom.equalTo(noSearchWordBackgroundView).inset(8)
+        }
+        
+        searchKeywordTableView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+    }
+    
     
     @objc func removeKeyword(sender: UIButton) {
         recentSearchList.remove(at: sender.tag)
@@ -125,6 +150,18 @@ class MainViewController: UIViewController, ViewProtocol {
 }
 
 extension MainViewController: UITableViewDelegate, UITableViewDataSource {
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return 44
+    }
+    
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let recentKeywordHeaderView = tableView.dequeueReusableHeaderFooterView(withIdentifier: RecentKeywordHeaderView.identifier) as! RecentKeywordHeaderView
+        
+        recentKeywordHeaderView.removeAllButton.addTarget(self, action: #selector(removeAllButtonClicked), for: .touchUpInside)
+        
+        return recentKeywordHeaderView
+    }
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return recentSearchList.count
     }

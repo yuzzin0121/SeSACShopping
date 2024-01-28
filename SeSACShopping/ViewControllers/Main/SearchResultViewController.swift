@@ -10,6 +10,7 @@ import UIKit
 
 // 검색 결과 화면
 class SearchResultViewController: UIViewController, ViewProtocol {
+    
     @IBOutlet weak var searchCountLabel: UILabel!
     
     @IBOutlet weak var accuracyButton: UIButton!
@@ -42,7 +43,7 @@ class SearchResultViewController: UIViewController, ViewProtocol {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureView()
-        designViews()
+        configureNavigationItem()
         configureCollectionView()
         
         // 상품 검색
@@ -109,7 +110,7 @@ class SearchResultViewController: UIViewController, ViewProtocol {
     }
     
     // navigationItem 디자인
-    func configureView() {
+    func configureNavigationItem() {
         if let searchKeyword {
             navigationItem.title = searchKeyword
         } else {
@@ -126,8 +127,16 @@ class SearchResultViewController: UIViewController, ViewProtocol {
         navigationController?.popViewController(animated: true)
     }
     
+    func configureHierarchy() {
+        
+    }
+    
+    func setupContstraints() {
+        
+    }
+    
     // 뷰 디자인
-    func designViews() {
+    func configureView() {
         view.backgroundColor = ColorStyle.backgroundColor
         
         searchCountLabel.design(text: "0 개의 검색 결과", textColor: ColorStyle.pointColor, font: .boldSystemFont(ofSize: 13))
