@@ -6,15 +6,22 @@
 //
 
 import UIKit
+import SnapKit
 
-class ProfileImageCollectionViewCell: UICollectionViewCell, CellProtocol {
+class ProfileImageCollectionViewCell: UICollectionViewCell, CellProtocol, ViewProtocol {
     
-    @IBOutlet weak var profileImageView: UIImageView!
+    let profileImageView = UIImageView()
     var isClicked = false
     
-    override func awakeFromNib() {
-        super.awakeFromNib()
-        // Initialization code
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        configureHierarchy()
+        configureView()
+        setupContstraints()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
     override func draw(_ rect: CGRect) {
@@ -31,5 +38,20 @@ class ProfileImageCollectionViewCell: UICollectionViewCell, CellProtocol {
     func isBorder(status: Bool) {
         profileImageView.layer.borderWidth = status ? 4 : 0
         profileImageView.layer.borderColor = status ? ColorStyle.pointColor.cgColor : UIColor.clear.cgColor
+    }
+    
+    func configureHierarchy() {
+        contentView.addSubview(profileImageView)
+    }
+    
+    func configureView() {
+        
+    }
+    
+    func setupContstraints() {
+        profileImageView.snp.makeConstraints { make in
+            make.edges.equalToSuperview().inset(6)
+            make.width.equalTo(profileImageView.snp.height)
+        }
     }
 }

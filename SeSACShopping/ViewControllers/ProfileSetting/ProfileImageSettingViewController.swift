@@ -8,9 +8,19 @@
 import UIKit
 
 class ProfileImageSettingViewController: UIViewController, ViewProtocol {
+    let selectedProfileImageView = UIImageView()
+    let profileImageCollectionView: UICollectionView = {
+        let flowLayout = UICollectionViewFlowLayout()
+        let spacing: CGFloat = 36
+        let cellWidth = (UIScreen.main.bounds.width - spacing*2) / 4
+        
+        flowLayout.itemSize = CGSize(width: cellWidth, height: cellWidth)
+        flowLayout.sectionInset = UIEdgeInsets(top: 12, left: 12, bottom: 12, right: 12)
+        flowLayout.scrollDirection = .vertical
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: flowLayout)
+        return collectionView
+    }()
     
-    @IBOutlet weak var selectedProfileImageView: UIImageView!
-    @IBOutlet weak var profileImageCollectionView: UICollectionView!
     var selectedProfileImageIndex: Int?
     var type: Type = .Onboarding    
     
@@ -20,9 +30,11 @@ class ProfileImageSettingViewController: UIViewController, ViewProtocol {
     // MARK: - viewDidLoad()
     override func viewDidLoad() {
         super.viewDidLoad()
+        configureHierarchy()
         configureView()
-        configureNavigationItem()
         configureCollectionView()
+        setupContstraints()
+        configureNavigationItem()
     }
     
     // MARK: - viewWillAppear()
@@ -32,6 +44,11 @@ class ProfileImageSettingViewController: UIViewController, ViewProtocol {
         guard let selectedProfileImageIndex else { return }
         profileList[selectedProfileImageIndex].isSelected = true
         selectedProfileImageView.image = profileList[selectedProfileImageIndex].profileImage
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        selectedProfileImageView.layer.cornerRadius = selectedProfileImageView.frame.height / 2
     }
     
     // pop - 시작 화면으로
@@ -48,17 +65,7 @@ class ProfileImageSettingViewController: UIViewController, ViewProtocol {
     func configureCollectionView() {
         profileImageCollectionView.delegate = self
         profileImageCollectionView.dataSource = self
-        let profileNib = UINib(nibName: ProfileImageCollectionViewCell.identifier, bundle: nil)
-        profileImageCollectionView.register(profileNib, forCellWithReuseIdentifier: ProfileImageCollectionViewCell.identifier)
-        
-        let flowLayout = UICollectionViewFlowLayout()
-        let spacing: CGFloat = 36
-        let cellWidth = (UIScreen.main.bounds.width - spacing*2) / 4
-        
-        flowLayout.itemSize = CGSize(width: cellWidth, height: cellWidth)
-        flowLayout.sectionInset = UIEdgeInsets(top: 12, left: 12, bottom: 12, right: 12)
-        flowLayout.scrollDirection = .vertical
-        profileImageCollectionView.collectionViewLayout = flowLayout
+        profileImageCollectionView.register(ProfileImageCollectionViewCell.self, forCellWithReuseIdentifier: ProfileImageCollectionViewCell.identifier)
     }
     
     // navigationItem 설정
@@ -70,11 +77,22 @@ class ProfileImageSettingViewController: UIViewController, ViewProtocol {
     }
     
     func configureHierarchy() {
-        
+        [selectedProfileImageView, profileImageCollectionView].forEach {
+            view.addSubview($0)
+        }
     }
     
     func setupContstraints() {
+        selectedProfileImageView.snp.makeConstraints { make in
+            make.top.equalTo(view.safeAreaLayoutGuide).offset(24)
+            make.centerX.equalToSuperview()
+            make.size.equalTo(100)
+        }
         
+        profileImageCollectionView.snp.makeConstraints { make in
+            make.top.equalTo(selectedProfileImageView.snp.bottom).offset(36)
+            make.horizontalEdges.bottom.equalTo(view.safeAreaLayoutGuide)
+        }
     }
     
     // 뷰 디자인

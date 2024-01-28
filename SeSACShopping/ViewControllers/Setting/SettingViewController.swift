@@ -55,8 +55,7 @@ class SettingViewController: UIViewController, ViewProtocol {
     
     // 프로필 클릭했을 때
     @IBAction func profileViewDidTap(_ sender: UITapGestureRecognizer) {
-        let MainSB = UIStoryboard(name: "Main", bundle: nil)
-        let NicknameSettingVC = MainSB.instantiateViewController(withIdentifier: NicknameSettingViewController.identifier) as! NicknameSettingViewController
+        let NicknameSettingVC = NicknameSettingViewController()
         NicknameSettingVC.type = .Setting
         NicknameSettingVC.nickname = UserDefaultManager.shared.nickname
         NicknameSettingVC.selectedImageIndex = UserDefaultManager.shared.profileImageIndex

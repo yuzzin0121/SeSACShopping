@@ -10,14 +10,12 @@ import UIKit
 // 프로필 닉네임 설정 화면
 
 class NicknameSettingViewController: UIViewController, ViewProtocol {
-    
-    @IBOutlet weak var profileImageView: UIImageView!
-    @IBOutlet weak var cameraImageView: UIImageView!
-    @IBOutlet weak var nicknameTextField: UITextField!
-    @IBOutlet weak var textFieldUnderLine: UIView!
-    @IBOutlet weak var statusLabel: UILabel!
-    @IBOutlet weak var finishButton: UIButton!
-    
+    let profileImageView = UIImageView()
+    let cameraImageView = UIImageView()
+    let nicknameTextField = UITextField()
+    let textFieldUnderLine = UIView()
+    let statusLabel = UILabel()
+    let finishButton = UIButton()
     
     lazy var profileList: [Profile] = ProfileImage.profileList
     var type: Type = .Setting   // 이전 화면의 타입
@@ -29,7 +27,28 @@ class NicknameSettingViewController: UIViewController, ViewProtocol {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureNavigationItem()
+        configureHierarchy()
         configureView()
+        setupContstraints()
+        setData()
+        hideKeyboardWhenTappedAround()
+        let tabGesture = UITapGestureRecognizer(target: self, action: #selector(profileImageClicked))
+        profileImageView.addGestureRecognizer(tabGesture)
+        nicknameTextField.addTarget(self, action: #selector(nicknameEditingChanged), for: .editingChanged)
+        finishButton.addTarget(self, action: #selector(finishButtonClicked), for: .touchUpInside)
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(true)
+        navigationItem.title = (type == .Onboarding) ? "프로필 설정" : "프로필 수정"  // 네비게이션아이템 타이틀 설정
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        profileImageView.layer.cornerRadius = profileImageView.frame.height / 2
+    }
+    
+    func setData() {
         if type == .Onboarding {    // 이전 화면이 온보딩 화면일 경우
             selectedImageIndex = getRandomImageIndex()  // 랜덤 프로필 이미지 설정
             if let selectedImageIndex {
@@ -46,15 +65,9 @@ class NicknameSettingViewController: UIViewController, ViewProtocol {
         }
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(true)
-        navigationItem.title = (type == .Onboarding) ? "프로필 설정" : "프로필 수정"  // 네비게이션아이템 타이틀 설정
-    }
-    
     // 프로필 사진 클릭했을 때
-    @IBAction func profileImageClicked(_ sender: UITapGestureRecognizer) {
-        let MainSB = UIStoryboard(name: "Main", bundle: nil)
-        let ProfileImageSettingVC = MainSB.instantiateViewController(withIdentifier: ProfileImageSettingViewController.identifier) as! ProfileImageSettingViewController
+    @objc func profileImageClicked(_ sender: UITapGestureRecognizer) {
+        let ProfileImageSettingVC = ProfileImageSettingViewController()
         ProfileImageSettingVC.type = self.type
         ProfileImageSettingVC.selectedProfileImageIndex = selectedImageIndex
         ProfileImageSettingVC.completionHandler = { index in
@@ -65,7 +78,7 @@ class NicknameSettingViewController: UIViewController, ViewProtocol {
     }
     
     // 완료 버튼 클릭했을 때
-    @IBAction func finishButtonClicked(_ sender: UIButton) {
+    @objc func finishButtonClicked(_ sender: UIButton) {
         if isValid && type == .Onboarding { // 이전 화면이 온보딩 화면일 경우
             setInfo()
             showMainTabBar()
@@ -96,13 +109,18 @@ class NicknameSettingViewController: UIViewController, ViewProtocol {
         UserDefaultManager.shared.profileImageIndex = selectedImageIndex!
     }
     
-    // 뷰 클릭했을 때 키보드 내리기
-    @IBAction func tapGestureView(_ sender: UITapGestureRecognizer) {
+    func hideKeyboardWhenTappedAround() {
+        let tap = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        tap.cancelsTouchesInView = false
+        view.addGestureRecognizer(tap)
+    }
+
+    @objc func dismissKeyboard() {
         view.endEditing(true)
     }
     
     // 닉네임 텍스트필드 내용 변경 시
-    @IBAction func nicknameEditingChanged(_ sender: UITextField) {
+    @objc func nicknameEditingChanged(_ sender: UITextField) {
         let text = sender.text!
         
         if isLengValid(nickname: text) == false {   // 글자수 체크
@@ -168,6 +186,9 @@ class NicknameSettingViewController: UIViewController, ViewProtocol {
     }
   
     func configureHierarchy() {
+        [profileImageView, cameraImageView, nicknameTextField, textFieldUnderLine, statusLabel, finishButton].forEach {
+            view.addSubview($0)
+        }
         
     }
     
@@ -175,6 +196,7 @@ class NicknameSettingViewController: UIViewController, ViewProtocol {
         navigationController?.setupBarAppearance()
         view.backgroundColor = ColorStyle.backgroundColor
         profileImageView.isUserInteractionEnabled = true
+        profileImageView.clipsToBounds = true
         profileImageView.design(image: nil,
                                 cornerRadius: profileImageView.frame.height/2)
         profileImageView.layer.borderWidth = 4
@@ -192,7 +214,37 @@ class NicknameSettingViewController: UIViewController, ViewProtocol {
     }
     
     func setupContstraints() {
+        profileImageView.snp.makeConstraints { make in
+            make.size.equalTo(100)
+            make.top.equalTo(view.safeAreaLayoutGuide).offset(50)
+            make.centerX.equalToSuperview()
+        }
+        cameraImageView.snp.makeConstraints { make in
+            make.bottom.trailing.equalTo(profileImageView)
+            make.size.equalTo(30)
+        }
         
+        nicknameTextField.snp.makeConstraints { make in
+            make.top.equalTo(profileImageView.snp.bottom).offset(24)
+            make.horizontalEdges.equalToSuperview().inset(24)
+            make.height.equalTo(44)
+        }
+        textFieldUnderLine.snp.makeConstraints { make in
+            make.top.equalTo(nicknameTextField.snp.bottom)
+            make.horizontalEdges.equalTo(nicknameTextField)
+            make.height.equalTo(1)
+        }
+        
+        statusLabel.snp.makeConstraints { make in
+            make.top.equalTo(textFieldUnderLine.snp.bottom).offset(12)
+            make.horizontalEdges.equalToSuperview().inset(28)
+            make.height.equalTo(20)
+        }
+        finishButton.snp.makeConstraints { make in
+            make.top.equalTo(statusLabel.snp.bottom).offset(28)
+            make.horizontalEdges.equalTo(nicknameTextField)
+            make.height.equalTo(44)
+        }
     }
     
     // 랜덤으로 프로필 이미지 가져오기
