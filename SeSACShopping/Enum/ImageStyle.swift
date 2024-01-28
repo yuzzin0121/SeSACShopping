@@ -8,6 +8,7 @@
 import UIKit
 
 enum ImageStyle {
+    static let sesacShopping = UIImage(named: "sesacShopping")!
     static let onboarding = UIImage(named: "onboarding")!
     static let camera = UIImage(named: "camera")!
     static let back = UIImage(systemName: "chevron.left")!

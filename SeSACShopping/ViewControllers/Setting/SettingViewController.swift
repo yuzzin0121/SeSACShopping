@@ -122,8 +122,7 @@ class SettingViewController: UIViewController, ViewProtocol {
         
         let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene
         let sceneDelegate = windowScene?.delegate as? SceneDelegate
-        let OnboardingSB = UIStoryboard(name: "Onboarding", bundle: nil)
-        let OnboardingVC = OnboardingSB.instantiateViewController(identifier: OnboardingViewController.identifier) as! OnboardingViewController
+        let OnboardingVC = OnboardingViewController()
         
         let nav = UINavigationController(rootViewController: OnboardingVC)  // 온보딩 화면으로
         sceneDelegate?.window?.rootViewController = nav
