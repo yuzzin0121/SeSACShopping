@@ -16,10 +16,11 @@ class ProfileImageView: UIImageView {
     
     func configureView() {
         isUserInteractionEnabled = true
-        clipsToBounds = true
-        layer.cornerRadius = self.frame.height / 2
+        contentMode = .scaleAspectFill
         layer.borderWidth = 4
         layer.borderColor = ColorStyle.pointColor.cgColor
+        layer.cornerRadius = self.frame.height / 2
+        clipsToBounds = true
     }
     
     required init?(coder: NSCoder) {

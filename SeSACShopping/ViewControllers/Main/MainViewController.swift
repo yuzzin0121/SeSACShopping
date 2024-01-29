@@ -35,7 +35,7 @@ class MainViewController: UIViewController, ViewProtocol {
         configureNavigationItem()
         configureSearchBar()
         configureHierarchy()
-        setupContstraints()
+        configureLayout()
         configureView()
         configureTableView()
     }
@@ -115,7 +115,7 @@ class MainViewController: UIViewController, ViewProtocol {
         noSearchWordLabel.design(text: "최근 검색어가 없어요", font: .boldSystemFont(ofSize: 17), textAlignment: .center)
     }
     
-    func setupContstraints() {
+    func configureLayout() {
         noSearchWordBackgroundView.snp.makeConstraints { make in
             make.center.equalToSuperview()
         }

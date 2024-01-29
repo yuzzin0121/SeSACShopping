@@ -96,7 +96,7 @@ class ProductDetailViewController: UIViewController, ViewProtocol {
         
     }
     
-    func setupContstraints() {
+    func configureLayout() {
         
     }
     

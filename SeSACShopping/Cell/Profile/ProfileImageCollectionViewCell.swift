@@ -9,7 +9,6 @@ import UIKit
 import SnapKit
 
 class ProfileImageCollectionViewCell: UICollectionViewCell, CellProtocol, ViewProtocol {
-    
     let profileImageView = ProfileImageView(frame: .zero)
     var isClicked = false
     
@@ -17,7 +16,7 @@ class ProfileImageCollectionViewCell: UICollectionViewCell, CellProtocol, ViewPr
         super.init(frame: frame)
         configureHierarchy()
         configureView()
-        setupContstraints()
+        configureLayout()
     }
     
     required init?(coder: NSCoder) {
@@ -47,7 +46,7 @@ class ProfileImageCollectionViewCell: UICollectionViewCell, CellProtocol, ViewPr
         
     }
     
-    func setupContstraints() {
+    func configureLayout() {
         profileImageView.snp.makeConstraints { make in
             make.edges.equalToSuperview().inset(6)
             make.width.equalTo(profileImageView.snp.height)

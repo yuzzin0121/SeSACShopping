@@ -20,7 +20,7 @@ class OnboardingViewController: UIViewController, ViewProtocol {
         super.viewDidLoad()
         configureHierarchy()
         configureView()
-        setupContstraints()
+        configureLayout()
         startButton.addTarget(self, action: #selector(startButtonClicked), for: .touchUpInside)
     }
     
@@ -38,7 +38,7 @@ class OnboardingViewController: UIViewController, ViewProtocol {
         }
     }
     
-    func setupContstraints() {
+    func configureLayout() {
         onboardingTitleImageView.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide).offset(16)
             make.centerX.equalToSuperview()

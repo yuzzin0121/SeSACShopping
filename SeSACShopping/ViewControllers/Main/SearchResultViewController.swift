@@ -131,7 +131,7 @@ class SearchResultViewController: UIViewController, ViewProtocol {
         
     }
     
-    func setupContstraints() {
+    func configureLayout() {
         
     }
     

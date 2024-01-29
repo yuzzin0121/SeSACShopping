@@ -10,5 +10,5 @@ import Foundation
 protocol ViewProtocol: AnyObject {
     func configureHierarchy()
     func configureView()
-    func setupContstraints()
+    func configureLayout()
 }

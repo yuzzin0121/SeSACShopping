@@ -9,17 +9,7 @@ import UIKit
 
 class ProfileImageSettingViewController: UIViewController, ViewProtocol {
     let selectedProfileImageView = ProfileImageView(frame: .zero)
-    let profileImageCollectionView: UICollectionView = {
-        let flowLayout = UICollectionViewFlowLayout()
-        let spacing: CGFloat = 36
-        let cellWidth = (UIScreen.main.bounds.width - spacing*2) / 4
-        
-        flowLayout.itemSize = CGSize(width: cellWidth, height: cellWidth)
-        flowLayout.sectionInset = UIEdgeInsets(top: 12, left: 12, bottom: 12, right: 12)
-        flowLayout.scrollDirection = .vertical
-        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: flowLayout)
-        return collectionView
-    }()
+    lazy var profileImageCollectionView = UICollectionView(frame: .zero, collectionViewLayout: configureCollectionViewFlowLayout())
     
     var selectedProfileImageIndex: Int?
     var type: Type = .Onboarding    
@@ -33,7 +23,7 @@ class ProfileImageSettingViewController: UIViewController, ViewProtocol {
         configureHierarchy()
         configureView()
         configureCollectionView()
-        setupContstraints()
+        configureLayout()
         configureNavigationItem()
     }
     
@@ -68,6 +58,17 @@ class ProfileImageSettingViewController: UIViewController, ViewProtocol {
         profileImageCollectionView.register(ProfileImageCollectionViewCell.self, forCellWithReuseIdentifier: ProfileImageCollectionViewCell.identifier)
     }
     
+    func configureCollectionViewFlowLayout() -> UICollectionViewFlowLayout {
+        let flowLayout = UICollectionViewFlowLayout()
+        let spacing: CGFloat = 36
+        let cellWidth = (UIScreen.main.bounds.width - spacing*2) / 4
+        
+        flowLayout.itemSize = CGSize(width: cellWidth, height: cellWidth)
+        flowLayout.sectionInset = UIEdgeInsets(top: 12, left: 12, bottom: 12, right: 12)
+        flowLayout.scrollDirection = .vertical
+        return flowLayout
+    }
+    
     // navigationItem 설정
     func configureNavigationItem() {
         navigationItem.title = "프로필 설정"
@@ -82,7 +83,7 @@ class ProfileImageSettingViewController: UIViewController, ViewProtocol {
         }
     }
     
-    func setupContstraints() {
+    func configureLayout() {
         selectedProfileImageView.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide).offset(24)
             make.centerX.equalToSuperview()

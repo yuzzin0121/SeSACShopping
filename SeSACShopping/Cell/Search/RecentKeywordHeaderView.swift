@@ -16,7 +16,7 @@ class RecentKeywordHeaderView: UITableViewHeaderFooterView, ViewProtocol {
         super.init(reuseIdentifier: reuseIdentifier)
         configureHierarchy()
         configureView()
-        setupContstraints()
+        configureLayout()
     }
     
     required init?(coder: NSCoder) {
@@ -35,7 +35,7 @@ class RecentKeywordHeaderView: UITableViewHeaderFooterView, ViewProtocol {
         removeAllButton.design(title: "모두 지우기", font: .boldSystemFont(ofSize: 14), titleColor: ColorStyle.pointColor, backgroundColor: .clear)
     }
     
-    func setupContstraints() {
+    func configureLayout() {
         recentSearchLabel.snp.makeConstraints { make in
             make.leading.equalToSuperview().offset(16)
             make.centerY.equalToSuperview()

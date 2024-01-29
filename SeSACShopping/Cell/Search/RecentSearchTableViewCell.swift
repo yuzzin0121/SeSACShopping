@@ -17,7 +17,7 @@ class RecentSearchTableViewCell: UITableViewCell, CellProtocol, ViewProtocol {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         configureHierarchy()
         configureView()
-        setupContstraints()
+        configureLayout()
     }
     
     required init?(coder: NSCoder) {
@@ -37,7 +37,7 @@ class RecentSearchTableViewCell: UITableViewCell, CellProtocol, ViewProtocol {
         removeButton.design(image: ImageStyle.xmark, tintColor: .gray, backgroundColor: .clear)
     }
     
-    func setupContstraints() {
+    func configureLayout() {
         searchImageView.snp.makeConstraints { make in
             make.verticalEdges.equalToSuperview().inset(12)
             make.leading.equalToSuperview().inset(16)

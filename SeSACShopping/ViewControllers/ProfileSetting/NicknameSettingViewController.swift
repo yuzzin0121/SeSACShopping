@@ -29,7 +29,7 @@ class NicknameSettingViewController: UIViewController, ViewProtocol {
         configureNavigationItem()
         configureHierarchy()
         configureView()
-        setupContstraints()
+        configureLayout()
         setData()
         hideKeyboardWhenTappedAround()
         let tabGesture = UITapGestureRecognizer(target: self, action: #selector(profileImageClicked))
@@ -207,7 +207,7 @@ class NicknameSettingViewController: UIViewController, ViewProtocol {
         finishButton.setTitle("완료", for: .normal)
     }
     
-    func setupContstraints() {
+    func configureLayout() {
         profileImageView.snp.makeConstraints { make in
             make.size.equalTo(100)
             make.top.equalTo(view.safeAreaLayoutGuide).offset(50)
