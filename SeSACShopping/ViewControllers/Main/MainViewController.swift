@@ -38,6 +38,7 @@ class MainViewController: UIViewController, ViewProtocol {
         configureLayout()
         configureView()
         configureTableView()
+//        hideKeyboardWhenTapArround()
     }
     
     // MARK: - ViewWillAppear
@@ -46,6 +47,15 @@ class MainViewController: UIViewController, ViewProtocol {
         nickname = UserDefaultManager.shared.nickname
         recentSearchList = UserDefaultManager.shared.searchKeywords
         isEmpty(recentSearchList.isEmpty)
+    }
+    
+    func hideKeyboardWhenTapArround() {
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(hideKeyboard))
+        view.addGestureRecognizer(tapGesture)
+    }
+    
+    @objc func hideKeyboard() {
+        searchController.searchBar.endEditing(true)
     }
     
     // 모두 지우기 버튼 클릭했을 때
@@ -170,6 +180,7 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: RecentSearchTableViewCell.identifier, for: indexPath) as! RecentSearchTableViewCell
         
         cell.removeButton.tag = indexPath.row
+        cell.selectionStyle = .none
         cell.configureCell(item: recentSearchList[indexPath.row])
         cell.removeButton.addTarget(self, action: #selector(removeKeyword), for: .touchUpInside)
         
