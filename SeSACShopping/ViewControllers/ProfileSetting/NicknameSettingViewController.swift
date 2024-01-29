@@ -10,7 +10,7 @@ import UIKit
 // 프로필 닉네임 설정 화면
 
 class NicknameSettingViewController: UIViewController, ViewProtocol {
-    let profileImageView = UIImageView()
+    let profileImageView = ProfileImageView(frame: .zero)
     let cameraImageView = UIImageView()
     let nicknameTextField = UITextField()
     let textFieldUnderLine = UIView()
@@ -195,12 +195,7 @@ class NicknameSettingViewController: UIViewController, ViewProtocol {
     func configureView() {
         navigationController?.setupBarAppearance()
         view.backgroundColor = ColorStyle.backgroundColor
-        profileImageView.isUserInteractionEnabled = true
-        profileImageView.clipsToBounds = true
-        profileImageView.design(image: nil,
-                                cornerRadius: profileImageView.frame.height/2)
-        profileImageView.layer.borderWidth = 4
-        profileImageView.layer.borderColor = ColorStyle.pointColor.cgColor
+        
         cameraImageView.design(image: ImageStyle.camera,
                                cornerRadius: cameraImageView.frame.height/2)
         nicknameTextField.design(placeholder: "닉네임을 입력해주세요:)",

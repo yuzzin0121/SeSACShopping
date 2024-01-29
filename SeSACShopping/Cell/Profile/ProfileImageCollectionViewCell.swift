@@ -10,7 +10,7 @@ import SnapKit
 
 class ProfileImageCollectionViewCell: UICollectionViewCell, CellProtocol, ViewProtocol {
     
-    let profileImageView = UIImageView()
+    let profileImageView = ProfileImageView(frame: .zero)
     var isClicked = false
     
     override init(frame: CGRect) {
@@ -25,7 +25,6 @@ class ProfileImageCollectionViewCell: UICollectionViewCell, CellProtocol, ViewPr
     }
     
     override func draw(_ rect: CGRect) {
-        profileImageView.clipsToBounds = true
         profileImageView.layer.cornerRadius = profileImageView.frame.height / 2
     }
     

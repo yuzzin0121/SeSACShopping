@@ -8,7 +8,7 @@
 import UIKit
 
 class ProfileImageSettingViewController: UIViewController, ViewProtocol {
-    let selectedProfileImageView = UIImageView()
+    let selectedProfileImageView = ProfileImageView(frame: .zero)
     let profileImageCollectionView: UICollectionView = {
         let flowLayout = UICollectionViewFlowLayout()
         let spacing: CGFloat = 36
@@ -99,11 +99,6 @@ class ProfileImageSettingViewController: UIViewController, ViewProtocol {
     func configureView() {
         navigationController?.setupBarAppearance()
         view.backgroundColor = ColorStyle.backgroundColor
-        
-        selectedProfileImageView.design(image: nil,
-                                cornerRadius: selectedProfileImageView.frame.height/2)
-        selectedProfileImageView.layer.borderWidth = 4
-        selectedProfileImageView.layer.borderColor = ColorStyle.pointColor.cgColor
         
         profileImageCollectionView.backgroundColor = ColorStyle.backgroundColor
     }

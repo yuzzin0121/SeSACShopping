@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6117573B2B67DE4C0043E958 /* ProfileImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6117573A2B67DE4C0043E958 /* ProfileImageView.swift */; };
 		6150F4962B5900150035F522 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6150F4952B5900150035F522 /* AppDelegate.swift */; };
 		6150F4982B5900150035F522 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6150F4972B5900150035F522 /* SceneDelegate.swift */; };
 		6150F49A2B5900150035F522 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6150F4992B5900150035F522 /* ViewController.swift */; };
@@ -54,6 +55,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		6117573A2B67DE4C0043E958 /* ProfileImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileImageView.swift; sourceTree = "<group>"; };
 		6150F4922B5900150035F522 /* SeSACShopping.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SeSACShopping.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6150F4952B5900150035F522 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		6150F4972B5900150035F522 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -113,6 +115,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		611757392B67DE330043E958 /* Component */ = {
+			isa = PBXGroup;
+			children = (
+				6117573A2B67DE4C0043E958 /* ProfileImageView.swift */,
+			);
+			path = Component;
+			sourceTree = "<group>";
+		};
 		6150F4892B5900150035F522 = {
 			isa = PBXGroup;
 			children = (
@@ -133,6 +143,7 @@
 		6150F4942B5900150035F522 /* SeSACShopping */ = {
 			isa = PBXGroup;
 			children = (
+				611757392B67DE330043E958 /* Component */,
 				6150F4C42B5921DE0035F522 /* Enum */,
 				6150F4B52B59049E0035F522 /* Protocol */,
 				6150F4B12B5901500035F522 /* Extension */,
@@ -397,6 +408,7 @@
 				61864C952B66AC4C0073C175 /* RecentKeywordHeaderView.swift in Sources */,
 				6150F4BD2B591AB90035F522 /* UILabel+Extension.swift in Sources */,
 				6150F4FC2B5D865C0035F522 /* ProductAPIManager.swift in Sources */,
+				6117573B2B67DE4C0043E958 /* ProfileImageView.swift in Sources */,
 				6150F4E42B5AB2940035F522 /* ProfileImage.swift in Sources */,
 				6150F4B42B5904800035F522 /* OnboardingViewController.swift in Sources */,
 				6150F4F02B5B887B0035F522 /* Type.swift in Sources */,
