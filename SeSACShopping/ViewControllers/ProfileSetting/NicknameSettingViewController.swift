@@ -15,7 +15,7 @@ class NicknameSettingViewController: UIViewController, ViewProtocol {
     let nicknameTextField = UITextField()
     let textFieldUnderLine = UIView()
     let statusLabel = UILabel()
-    let finishButton = UIButton()
+    let finishButton = PointButton()
     
     lazy var profileList: [Profile] = ProfileImage.profileList
     var type: Type = .Setting   // 이전 화면의 타입
@@ -204,8 +204,7 @@ class NicknameSettingViewController: UIViewController, ViewProtocol {
         textFieldUnderLine.backgroundColor = ColorStyle.textColor
         statusLabel.design(text: "", textColor: ColorStyle.pointColor, font: .systemFont(ofSize: 13))
         
-        finishButton.design(title: "완료",
-                            cornerRadius: 8)
+        finishButton.setTitle("완료", for: .normal)
     }
     
     func setupContstraints() {

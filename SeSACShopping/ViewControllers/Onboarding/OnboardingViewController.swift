@@ -14,7 +14,7 @@ class OnboardingViewController: UIViewController, ViewProtocol {
     
     let onboardingTitleImageView = UIImageView()
     let onboardingImageView = UIImageView()
-    let startButton = UIButton()
+    let startButton = PointButton()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -69,10 +69,7 @@ class OnboardingViewController: UIViewController, ViewProtocol {
         // 온보딩 이미지뷰
         onboardingImageView.design(image: ImageStyle.onboarding)
         // 시작하기 버튼
-        startButton.design(title: "시작하기",
-                                 titleColor: ColorStyle.textColor,
-                                 backgroundColor:ColorStyle.pointColor,
-                                 cornerRadius: 8)
+        startButton.setTitle("시작하기", for: .normal)
     }
 
 }

@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		6117573B2B67DE4C0043E958 /* ProfileImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6117573A2B67DE4C0043E958 /* ProfileImageView.swift */; };
+		6117573D2B67E0010043E958 /* PointButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6117573C2B67E0010043E958 /* PointButton.swift */; };
 		6150F4962B5900150035F522 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6150F4952B5900150035F522 /* AppDelegate.swift */; };
 		6150F4982B5900150035F522 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6150F4972B5900150035F522 /* SceneDelegate.swift */; };
 		6150F49A2B5900150035F522 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6150F4992B5900150035F522 /* ViewController.swift */; };
@@ -56,6 +57,7 @@
 
 /* Begin PBXFileReference section */
 		6117573A2B67DE4C0043E958 /* ProfileImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileImageView.swift; sourceTree = "<group>"; };
+		6117573C2B67E0010043E958 /* PointButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PointButton.swift; sourceTree = "<group>"; };
 		6150F4922B5900150035F522 /* SeSACShopping.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SeSACShopping.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6150F4952B5900150035F522 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		6150F4972B5900150035F522 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -119,6 +121,7 @@
 			isa = PBXGroup;
 			children = (
 				6117573A2B67DE4C0043E958 /* ProfileImageView.swift */,
+				6117573C2B67E0010043E958 /* PointButton.swift */,
 			);
 			path = Component;
 			sourceTree = "<group>";
@@ -391,6 +394,7 @@
 				61864BF32B6085F40073C175 /* UIViewController+Extension.swift in Sources */,
 				6150F5032B5D8F9F0035F522 /* ProductCollectionViewCell.swift in Sources */,
 				6150F4E82B5AB3E70035F522 /* ProfileImageCollectionViewCell.swift in Sources */,
+				6117573D2B67E0010043E958 /* PointButton.swift in Sources */,
 				6150F4CF2B5929CE0035F522 /* UINavigationController+Extension.swift in Sources */,
 				6150F4982B5900150035F522 /* SceneDelegate.swift in Sources */,
 				6150F4F22B5B8E510035F522 /* ProductDetailViewController.swift in Sources */,
