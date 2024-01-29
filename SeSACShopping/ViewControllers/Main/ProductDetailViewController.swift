@@ -19,8 +19,7 @@ import WebKit
 
 // 상품 상세 화면
 class ProductDetailViewController: UIViewController, ViewProtocol {
-    
-    @IBOutlet weak var webView: WKWebView!
+    let webView = WKWebView()
     
     var productTitle: String?   // 상품 타이틀
     var productId: String? = nil    // 상품 id
@@ -34,7 +33,8 @@ class ProductDetailViewController: UIViewController, ViewProtocol {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        configureHierarchy()
+        configureLayout()
         configureView()
         configureNavigationItem()
         showWebView()
@@ -93,11 +93,13 @@ class ProductDetailViewController: UIViewController, ViewProtocol {
     }
     
     func configureHierarchy() {
-        
+        view.addSubview(webView)
     }
     
     func configureLayout() {
-        
+        webView.snp.makeConstraints { make in
+            make.edges.equalTo(view.safeAreaLayoutGuide)
+        }
     }
     
     func configureView() {

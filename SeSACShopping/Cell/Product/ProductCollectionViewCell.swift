@@ -8,13 +8,14 @@
 import UIKit
 import Kingfisher
 
-class ProductCollectionViewCell: UICollectionViewCell, CellProtocol {
+class ProductCollectionViewCell: UICollectionViewCell, CellProtocol, ViewProtocol {
     
-    @IBOutlet weak var productImageView: UIImageView!
-    @IBOutlet weak var titleLabel: UILabel!
-    @IBOutlet weak var mallNameLabel: UILabel!
-    @IBOutlet weak var lpriceLabel: UILabel!
-    @IBOutlet weak var likeButton: UIButton!
+    let productImageView = UIImageView()
+    let titleLabel = UILabel()
+    let mallNameLabel = UILabel()
+    let lpriceLabel = UILabel()
+    let likeButton = UIButton()
+    
     var isLike:Bool = false {
         didSet {
             let image = (isLike == true) ? ImageStyle.likeFill : ImageStyle.like
@@ -22,13 +23,15 @@ class ProductCollectionViewCell: UICollectionViewCell, CellProtocol {
         }
     }
     
-    override func awakeFromNib() {
-        super.awakeFromNib()
-        
-        titleLabel.design(textColor: .gray, 
-                          font: .systemFont(ofSize: 13), numberOfLines: 2)
-        mallNameLabel.design(font: .systemFont(ofSize: 14, weight: .semibold))
-        lpriceLabel.design(font: .boldSystemFont(ofSize: 16))
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        configureHierarchy()
+        configureLayout()
+        configureView()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
     override func draw(_ rect: CGRect) {
@@ -37,6 +40,49 @@ class ProductCollectionViewCell: UICollectionViewCell, CellProtocol {
                           tintColor: ColorStyle.backgroundColor,
                           backgroundColor: ColorStyle.textColor,
                           cornerRadius: likeButton.frame.height/2)
+    }
+    
+    func configureHierarchy() {
+        [productImageView, titleLabel, mallNameLabel, lpriceLabel].forEach {
+            contentView.addSubview($0)
+        }
+        productImageView.addSubview(likeButton)
+    }
+    
+    func configureView() {
+        titleLabel.design(textColor: .gray,
+                          font: .systemFont(ofSize: 13), numberOfLines: 2)
+        mallNameLabel.design(font: .systemFont(ofSize: 14, weight: .semibold))
+        lpriceLabel.design(font: .boldSystemFont(ofSize: 16))
+    }
+    
+    func configureLayout() {
+        productImageView.snp.makeConstraints { make in
+            make.horizontalEdges.top.equalToSuperview()
+            make.height.equalTo(productImageView.snp.width)
+        }
+        
+        likeButton.snp.makeConstraints { make in
+            make.bottom.trailing.equalTo(productImageView).inset(10)
+            make.size.equalTo(28)
+        }
+        
+        titleLabel.snp.makeConstraints { make in
+            make.top.equalTo(productImageView.snp.bottom).offset(6)
+            make.horizontalEdges.equalToSuperview().inset(4)
+            make.height.greaterThanOrEqualTo(36)
+        }
+        
+        mallNameLabel.snp.makeConstraints { make in
+            make.top.equalTo(titleLabel.snp.bottom).offset(4)
+            make.horizontalEdges.equalTo(titleLabel)
+        }
+        
+        lpriceLabel.snp.makeConstraints { make in
+            make.top.equalTo(mallNameLabel.snp.bottom).offset(6)
+            make.horizontalEdges.equalTo(titleLabel)
+            make.bottom.greaterThanOrEqualTo(contentView).inset(16)
+        }
     }
 
     func configureCell(item: Any) {

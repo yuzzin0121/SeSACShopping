@@ -150,11 +150,8 @@ class SettingViewController: UIViewController, ViewProtocol {
         profileBackgroundView.layer.cornerRadius = 12
         
         profileImageView.image = profileImages[index].profileImage
-        
-        infoStackView.axis = .vertical
-        infoStackView.alignment = .fill
-        infoStackView.distribution = .fill
-        infoStackView.spacing = 4
+    
+        infoStackView.design(axis: .vertical)
         
         let nickname = UserDefaultManager.shared.nickname
         nicknameLabel.design(text: "떠나고싶은 \(nickname)",

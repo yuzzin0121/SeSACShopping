@@ -10,16 +10,17 @@ import UIKit
 
 // 검색 결과 화면
 class SearchResultViewController: UIViewController, ViewProtocol {
+    let searchCountLabel = UILabel()
     
-    @IBOutlet weak var searchCountLabel: UILabel!
-    
-    @IBOutlet weak var accuracyButton: UIButton!
-    @IBOutlet weak var dateOrderButton: UIButton!
-    @IBOutlet weak var hPriceOrderButton: UIButton!
-    @IBOutlet weak var lPriceOrderButton: UIButton!
+    let filterStackView = UIStackView()
+    let accuracyButton = FilterButton()
+    let dateOrderButton = FilterButton()
+    let hPriceOrderButton = FilterButton()
+    let lPriceOrderButton = FilterButton()
     
     lazy var filterButtons: [UIButton] = [accuracyButton, dateOrderButton, hPriceOrderButton, lPriceOrderButton]
-    @IBOutlet weak var productCollectionView: UICollectionView!
+    
+    lazy var productCollectionView = UICollectionView(frame: .zero, collectionViewLayout: configureCollectionViewFlowLayout())
     
     var searchKeyword: String?  // 검색 키워드
     let filterList: [Filter] = Filter.allCases  // 필터 리스트
@@ -42,9 +43,15 @@ class SearchResultViewController: UIViewController, ViewProtocol {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        configureHierarchy()
+        configureLayout()
         configureView()
         configureNavigationItem()
         configureCollectionView()
+        
+        filterButtons.forEach {
+            $0.addTarget(self, action: #selector(filterButtonClicked), for: .touchUpInside)
+        }
         
         // 상품 검색
         productAPIManager.callRequest(keyword: searchKeyword ?? "", sort: filterList[0].sortValue) { productsInfo in
@@ -63,15 +70,11 @@ class SearchResultViewController: UIViewController, ViewProtocol {
     }
     
     // 필터 버튼 클릭했을 때
-    @IBAction func filterButtonClicked(_ sender: UIButton) {
-        filterButtons[selectedIndex].backgroundColor = ColorStyle.backgroundColor
-        filterButtons[selectedIndex].setTitleColor(ColorStyle.textColor, for: .normal)
-        filterButtons[selectedIndex].layer.borderColor = ColorStyle.textColor.cgColor
-        filterButtons[selectedIndex].layer.borderWidth = 1
+    @objc func filterButtonClicked(_ sender: UIButton) {
+        setButtonDesign(filterButtons[selectedIndex], isActive: false)
         
         let index = sender.tag
-        filterButtons[index].backgroundColor = ColorStyle.textColor
-        filterButtons[index].setTitleColor(ColorStyle.backgroundColor, for: .normal)
+        setButtonDesign(filterButtons[index], isActive: true)
         selectedIndex = index
         start = 1
         guard let searchKeyword else { return }
@@ -92,21 +95,39 @@ class SearchResultViewController: UIViewController, ViewProtocol {
         }
     }
     
+    
+    func setButtonDesign(_ button: UIButton, isActive: Bool) {
+        if isActive {
+            button.backgroundColor = ColorStyle.textColor
+            button.setTitleColor(ColorStyle.backgroundColor, for: .normal)
+        } else {
+            button.backgroundColor = ColorStyle.backgroundColor
+            button.setTitleColor(ColorStyle.textColor, for: .normal)
+            button.layer.borderColor = ColorStyle.textColor.cgColor
+            button.layer.borderWidth = 1
+        }
+    }
+    
     func configureCollectionView() {
         productCollectionView.delegate = self
         productCollectionView.dataSource = self
         productCollectionView.prefetchDataSource = self
         productCollectionView.backgroundColor = ColorStyle.backgroundColor
+
+        productCollectionView.register(ProductCollectionViewCell.self, forCellWithReuseIdentifier: ProductCollectionViewCell.identifier)
+    }
+    
+    func configureCollectionViewFlowLayout() -> UICollectionViewFlowLayout {
         let layout = UICollectionViewFlowLayout()
         let spacing: CGFloat = 12
         let cellWidth = UIScreen.main.bounds.width - (spacing*2) - 32
         layout.itemSize = .init(width: cellWidth/2, height: (cellWidth/2) * 1.5)
+        layout.minimumLineSpacing = 12
+        layout.minimumInteritemSpacing = 12
         layout.sectionInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
         layout.scrollDirection = .vertical
-        productCollectionView.collectionViewLayout = layout
         
-        let productNib = UINib(nibName: ProductCollectionViewCell.identifier, bundle: nil)
-        productCollectionView.register(productNib, forCellWithReuseIdentifier: ProductCollectionViewCell.identifier)
+        return layout
     }
     
     // navigationItem 디자인
@@ -128,11 +149,37 @@ class SearchResultViewController: UIViewController, ViewProtocol {
     }
     
     func configureHierarchy() {
+        [searchCountLabel, filterStackView, productCollectionView].forEach {
+            view.addSubview($0)
+        }
         
+        filterButtons.forEach {
+            filterStackView.addArrangedSubview($0)
+        }
     }
     
     func configureLayout() {
+        searchCountLabel.snp.makeConstraints { make in
+            make.top.equalTo(view.safeAreaLayoutGuide).offset(12)
+            make.horizontalEdges.equalToSuperview().inset(16)
+            make.height.equalTo(18)
+        }
         
+        filterStackView.snp.makeConstraints { make in
+            make.top.equalTo(searchCountLabel.snp.bottom).offset(12)
+            make.leading.equalTo(searchCountLabel)
+        }
+        
+        filterButtons.forEach {
+            $0.snp.makeConstraints { make in
+                make.height.equalTo(28)
+            }
+        }
+        
+        productCollectionView.snp.makeConstraints { make in
+            make.top.equalTo(filterStackView.snp.bottom).offset(12)
+            make.horizontalEdges.bottom.equalTo(view.safeAreaLayoutGuide)
+        }
     }
     
     // 뷰 디자인
@@ -141,18 +188,15 @@ class SearchResultViewController: UIViewController, ViewProtocol {
         
         searchCountLabel.design(text: "0 개의 검색 결과", textColor: ColorStyle.pointColor, font: .boldSystemFont(ofSize: 13))
         
+        filterStackView.design(distribution: .equalSpacing, spacing: 8)
+        
         for index in 1...filterButtons.count - 1 {
-            filterButtons[index].design(title: filterList[index].title,
-                                        backgroundColor: ColorStyle.backgroundColor,
-                                        cornerRadius: 8,
-                                        borderColor: ColorStyle.textColor.cgColor)
-            filterButtons[index].contentEdgeInsets = UIEdgeInsets(top: 0, left: 6, bottom: 0, right: 6)
+            filterButtons[index].setTitle(filterList[index].title, for: .normal)
             filterButtons[index].tag = index
         }
         
         filterButtons[0].design(title: filterList[0].title, titleColor: ColorStyle.backgroundColor,
                                 backgroundColor: ColorStyle.textColor, cornerRadius: 8)
-        filterButtons[0].contentEdgeInsets = UIEdgeInsets(top: 0, left: 6, bottom: 0, right: 6)
         filterButtons[0].tag = 0
     }
     
@@ -194,8 +238,7 @@ extension SearchResultViewController: UICollectionViewDelegate, UICollectionView
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let title = productList[indexPath.row].productItem.title.htmlEscaped
         
-        let MainSB = UIStoryboard(name: "Main", bundle: nil)
-        let ProductDetailVC = MainSB.instantiateViewController(withIdentifier: ProductDetailViewController.identifier) as! ProductDetailViewController
+        let ProductDetailVC = ProductDetailViewController()
         ProductDetailVC.productTitle = title
         ProductDetailVC.productId = productList[indexPath.row].productItem.productId
         ProductDetailVC.isLike = productList[indexPath.row].isLike
