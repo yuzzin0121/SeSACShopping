@@ -54,6 +54,7 @@ class MainViewController: UIViewController, ViewProtocol {
         view.addGestureRecognizer(tapGesture)
     }
     
+    
     @objc func hideKeyboard() {
         searchController.searchBar.endEditing(true)
     }

@@ -121,22 +121,42 @@ class NicknameSettingViewController: UIViewController, ViewProtocol {
     
     // 닉네임 텍스트필드 내용 변경 시
     @objc func nicknameEditingChanged(_ sender: UITextField) {
-        let text = sender.text!
+        guard let text = sender.text else { return }
         
-        if isLengValid(nickname: text) == false {   // 글자수 체크
-            statusLabel.text = "2글자 이상 10글자 미만으로 설정해주세요"
-            isValid = false
-        } else if isNotSpecialChars(nickname: text) {   // 특수문자 체크
-            statusLabel.text = "닉네임에 @, #, $, %는 포함할 수 없어요"
-            isValid = false
-        } else if isNotNumber(nickname: text){  // 숫자 포함 체크
-            statusLabel.text = "닉네임에 숫자는 포함할 수 없어요"
-            isValid = false
-        } else {    // 닉네임 설정 가능
+        do {
+            let result = try validateNicknameInputError(text: text)
             statusLabel.text = "사용할 수 있는 닉네임이에요"
             isValid = true
             nickname = text
+        } catch {
+            switch error {
+            case ValidationNicknameError.invalidateLength:
+                statusLabel.text = ValidationNicknameError.invalidateLength.message
+            case ValidationNicknameError.isSpecialChars:
+                statusLabel.text = ValidationNicknameError.isSpecialChars.message
+            case ValidationNicknameError.isNumber:
+                statusLabel.text = ValidationNicknameError.isNumber.message
+            default:
+                statusLabel.text = "사용할 수 없는 닉네임입니다."
+            }
+            isValid = false
         }
+    }
+    
+    func validateNicknameInputError(text: String) throws -> Bool {
+        guard isLengValid(nickname: text) else {
+            throw ValidationNicknameError.invalidateLength
+        }
+        
+        guard !isNotSpecialChars(nickname: text) else {
+            throw ValidationNicknameError.isSpecialChars
+        }
+        
+        guard !isNotNumber(nickname: text) else {
+            throw ValidationNicknameError.isNumber
+        }
+        
+        return true
     }
     
     // 글자수 체크 (2~9)

@@ -52,21 +52,42 @@ class SearchResultViewController: UIViewController, ViewProtocol {
         filterButtons.forEach {
             $0.addTarget(self, action: #selector(filterButtonClicked), for: .touchUpInside)
         }
-        
-        // 상품 검색
-        productAPIManager.callRequest(keyword: searchKeyword ?? "", sort: filterList[0].sortValue) { productsInfo in
-            self.searchCount = productsInfo.total
-            let likeIds = UserDefaultManager.shared.likeProductIds
-            var products: [Product] = []
-            for product in productsInfo.items {
-                var isLike = false
-                if likeIds.contains(product.productId) {
-                    isLike = true
+        if let searchKeyword, let sortValue = filterList.first?.sortValue {
+            // 상품 검색
+            ProductSessionManager.shared.fetchNaverProduct(keyword: searchKeyword, sort: sortValue) { productsInfo, networkError in
+                if networkError == nil {
+                    guard let productsInfo = productsInfo else { return }
+                    self.searchCount = productsInfo.total
+                    let likeIds = UserDefaultManager.shared.likeProductIds
+                    var products: [Product] = []
+                    for product in productsInfo.items {
+                        var isLike = false
+                        if likeIds.contains(product.productId) {
+                            isLike = true
+                        }
+                        products.append(Product(isLike: isLike, productItem: product))
+                    }
+                    self.productList = products
+                } else {
+                    guard let error = networkError else { return }
+                    self.printError(error: error)
                 }
-                products.append(Product(isLike: isLike, productItem: product))
             }
-            self.productList = products
         }
+        
+//        productAPIManager.callRequest(keyword: searchKeyword ?? "", sort: filterList[0].sortValue) { productsInfo in
+//            self.searchCount = productsInfo.total
+//            let likeIds = UserDefaultManager.shared.likeProductIds
+//            var products: [Product] = []
+//            for product in productsInfo.items {
+//                var isLike = false
+//                if likeIds.contains(product.productId) {
+//                    isLike = true
+//                }
+//                products.append(Product(isLike: isLike, productItem: product))
+//            }
+//            self.productList = products
+//        }
     }
     
     // 필터 버튼 클릭했을 때
@@ -79,22 +100,57 @@ class SearchResultViewController: UIViewController, ViewProtocol {
         start = 1
         guard let searchKeyword else { return }
         
-        productAPIManager.callRequest(keyword: searchKeyword, sort: filterList[index].sortValue) { productsInfo in
-            self.searchCount = productsInfo.total
-            let likeIds = UserDefaultManager.shared.likeProductIds
-            var products: [Product] = []
-            for product in productsInfo.items {
-                var isLike = false
-                if likeIds.contains(product.productId) {
-                    isLike = true
+        ProductSessionManager.shared.fetchNaverProduct(keyword: searchKeyword, sort: filterList[index].sortValue) { productsInfo, networkError in
+            if networkError == nil {
+                guard let productsInfo = productsInfo else { return }
+                self.searchCount = productsInfo.total
+                let likeIds = UserDefaultManager.shared.likeProductIds
+                var products: [Product] = []
+                for product in productsInfo.items {
+                    var isLike = false
+                    if likeIds.contains(product.productId) {
+                        isLike = true
+                    }
+                    products.append(Product(isLike: isLike, productItem: product))
                 }
-                products.append(Product(isLike: isLike, productItem: product))
+                self.productList = products
+                self.productCollectionView.scrollToItem(at: IndexPath(item: 0, section: 0), at: .top, animated: true)
+            } else {
+                guard let error = networkError else { return }
+                self.printError(error: error)
             }
-            self.productList = products
-            self.productCollectionView.scrollToItem(at: IndexPath(item: 0, section: 0), at: .top, animated: true)
+        }
+        
+//        productAPIManager.callRequest(keyword: searchKeyword, sort: filterList[index].sortValue) { productsInfo in
+//            self.searchCount = productsInfo.total
+//            let likeIds = UserDefaultManager.shared.likeProductIds
+//            var products: [Product] = []
+//            for product in productsInfo.items {
+//                var isLike = false
+//                if likeIds.contains(product.productId) {
+//                    isLike = true
+//                }
+//                products.append(Product(isLike: isLike, productItem: product))
+//            }
+//            self.productList = products
+//            self.productCollectionView.scrollToItem(at: IndexPath(item: 0, section: 0), at: .top, animated: true)
+//        }
+    }
+     
+    func printError(error: Error) {
+        switch error {
+        case NetworkError.failedRequest:
+            print(NetworkError.failedRequest.message)
+        case NetworkError.invalidData:
+            print(NetworkError.invalidData.message)
+        case NetworkError.invalidResponse:
+            print(NetworkError.invalidResponse.message)
+        case NetworkError.noData:
+            print(NetworkError.noData.message)
+        default:
+            print("알 수 없는 오류가 발생했습니다다")
         }
     }
-    
     
     func setButtonDesign(_ button: UIButton, isActive: Bool) {
         if isActive {
@@ -249,21 +305,38 @@ extension SearchResultViewController: UICollectionViewDelegate, UICollectionView
 
 extension SearchResultViewController: UICollectionViewDataSourcePrefetching {
     func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
-        
+        guard let searchKeyword else { return }
         for item in indexPaths {
             if productList.count - 6 == item.row && isEnd == false{
                 start += 30
                 
                 if start + 30 - searchCount < 0 {
-                    productAPIManager.callRequest(keyword: searchKeyword!, sort: filterList[selectedIndex].sortValue, start: 30) { productsInfo in
-                        self.searchCount = productsInfo.total
-                        let likeIds = UserDefaultManager.shared.likeProductIds
-                        for product in productsInfo.items {
-                            var isLike = false
-                            if likeIds.contains(product.productId) {
-                                isLike = true
+//                    productAPIManager.callRequest(keyword: searchKeyword, sort: filterList[selectedIndex].sortValue, start: 30) { productsInfo in
+//                        self.searchCount = productsInfo.total
+//                        let likeIds = UserDefaultManager.shared.likeProductIds
+//                        for product in productsInfo.items {
+//                            var isLike = false
+//                            if likeIds.contains(product.productId) {
+//                                isLike = true
+//                            }
+//                            self.productList.append(Product(isLike: isLike, productItem: product))
+//                        }
+//                    }
+                    ProductSessionManager.shared.fetchNaverProduct(keyword: searchKeyword, sort: filterList[selectedIndex].sortValue, start: start) { productsInfo, networkError in
+                        if networkError == nil {
+                            guard let productsInfo = productsInfo else { return }
+                            self.searchCount = productsInfo.total
+                            let likeIds = UserDefaultManager.shared.likeProductIds
+                            for product in productsInfo.items {
+                                var isLike = false
+                                if likeIds.contains(product.productId) {
+                                    isLike = true
+                                }
+                                self.productList.append(Product(isLike: isLike, productItem: product))
                             }
-                            self.productList.append(Product(isLike: isLike, productItem: product))
+                        } else {
+                            guard let error = networkError else { return }
+                            self.printError(error: error)
                         }
                     }
                 }
