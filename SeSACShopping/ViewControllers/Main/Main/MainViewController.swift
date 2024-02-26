@@ -9,15 +9,12 @@ import UIKit
 import SnapKit
 
 // 메인 화면
-class MainViewController: UIViewController, ViewProtocol {
-    let noSearchWordBackgroundView = UIView()
-    let noSearchWordImageView = UIImageView()
-    let noSearchWordLabel = UILabel()
-    let searchKeywordTableView = UITableView(frame: .zero, style: .grouped)
+class MainViewController: BaseViewController {
+    let mainView = MainView()
     var recentSearchList: [String] = [] {
         didSet {
             isEmpty(recentSearchList.isEmpty)
-            searchKeywordTableView.reloadData()
+            mainView.searchKeywordTableView.reloadData()
         }
     }
     let searchController = UISearchController(searchResultsController: nil)
@@ -31,14 +28,14 @@ class MainViewController: UIViewController, ViewProtocol {
     // MARK: - ViewDidLoad
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        configureNavigationItem()
+
         configureSearchBar()
-        configureHierarchy()
-        configureLayout()
-        configureView()
         configureTableView()
 //        hideKeyboardWhenTapArround()
+    }
+    
+    override func loadView() {
+        view = mainView
     }
     
     // MARK: - ViewWillAppear
@@ -54,7 +51,6 @@ class MainViewController: UIViewController, ViewProtocol {
         view.addGestureRecognizer(tapGesture)
     }
     
-    
     @objc func hideKeyboard() {
         searchController.searchBar.endEditing(true)
     }
@@ -68,28 +64,23 @@ class MainViewController: UIViewController, ViewProtocol {
     // 최근 검색어 존재 유무에 따라 UI 설정
     func isEmpty(_ isEmpty: Bool) {
         if isEmpty == true {
-            noSearchWordBackgroundView.alpha = 1
-            searchKeywordTableView.alpha = 0
+            mainView.noSearchWordBackgroundView.alpha = 1
+            mainView.searchKeywordTableView.alpha = 0
         } else {
-            noSearchWordBackgroundView.alpha = 0
-            searchKeywordTableView.alpha = 1
+            mainView.noSearchWordBackgroundView.alpha = 0
+            mainView.searchKeywordTableView.alpha = 1
         }
     }
     
     func configureTableView() {
-        searchKeywordTableView.backgroundColor = ColorStyle.backgroundColor 
-        searchKeywordTableView.delegate = self
-        searchKeywordTableView.dataSource = self
-        searchKeywordTableView.rowHeight = 52
-        searchKeywordTableView.sectionHeaderTopPadding = 0
-        searchKeywordTableView.register(RecentKeywordHeaderView.self, forHeaderFooterViewReuseIdentifier: RecentKeywordHeaderView.identifier)
-        searchKeywordTableView.register(RecentSearchTableViewCell.self, forCellReuseIdentifier: RecentSearchTableViewCell.identifier)
+        mainView.searchKeywordTableView.backgroundColor = ColorStyle.backgroundColor
+        mainView.searchKeywordTableView.delegate = self
+        mainView.searchKeywordTableView.dataSource = self
     }
     
     
     // tabbar. navigationItem 설정
-    func configureNavigationItem() {
-        navigationController?.setupBarAppearance()
+    override func configureNavigationItem() {
         let nickname = UserDefaultManager.shared.nickname
         self.navigationItem.title = "떠나고싶은 \(nickname)님의 새싹쇼핑"
         
@@ -106,44 +97,6 @@ class MainViewController: UIViewController, ViewProtocol {
         searchController.searchBar.delegate = self
         searchController.searchBar.searchTextField.textColor = .lightGray
         searchController.searchBar.searchTextField.backgroundColor = ColorStyle.deepDarkGray
-    }
-    
-    func configureHierarchy() {
-        [noSearchWordBackgroundView, searchKeywordTableView].forEach {
-            view.addSubview($0)
-        }
-        
-        [noSearchWordImageView, noSearchWordLabel].forEach {
-            noSearchWordBackgroundView.addSubview($0)
-        }
-    }
-    
-    func configureView() {
-        navigationController?.setupBarAppearance()
-        view.backgroundColor = ColorStyle.backgroundColor
-        noSearchWordBackgroundView.backgroundColor = ColorStyle.backgroundColor
-        noSearchWordImageView.design(image: ImageStyle.empty, contentMode: .scaleAspectFit)
-        noSearchWordLabel.design(text: "최근 검색어가 없어요", font: .boldSystemFont(ofSize: 17), textAlignment: .center)
-    }
-    
-    func configureLayout() {
-        noSearchWordBackgroundView.snp.makeConstraints { make in
-            make.center.equalToSuperview()
-        }
-        
-        noSearchWordImageView.snp.makeConstraints { make in
-            make.top.horizontalEdges.equalTo(noSearchWordBackgroundView).inset(8)
-            make.height.equalTo(268)
-        }
-        
-        noSearchWordLabel.snp.makeConstraints { make in
-            make.top.equalTo(noSearchWordImageView.snp.bottom).offset(8)
-            make.horizontalEdges.bottom.equalTo(noSearchWordBackgroundView).inset(8)
-        }
-        
-        searchKeywordTableView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
-        }
     }
     
     

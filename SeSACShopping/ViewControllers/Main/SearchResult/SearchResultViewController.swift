@@ -9,31 +9,24 @@ import UIKit
 
 
 // 검색 결과 화면
-class SearchResultViewController: UIViewController, ViewProtocol {
-    let searchCountLabel = UILabel()
-    
-    let filterStackView = UIStackView()
-    let accuracyButton = FilterButton()
-    let dateOrderButton = FilterButton()
-    let hPriceOrderButton = FilterButton()
-    let lPriceOrderButton = FilterButton()
-    
-    lazy var filterButtons: [UIButton] = [accuracyButton, dateOrderButton, hPriceOrderButton, lPriceOrderButton]
-    
-    lazy var productCollectionView = UICollectionView(frame: .zero, collectionViewLayout: configureCollectionViewFlowLayout())
+class SearchResultViewController: BaseViewController {
+    let mainView = SearchResultView()
+    lazy var filterButtons: [UIButton] = [
+        mainView.accuracyButton, mainView.dateOrderButton,
+        mainView.hPriceOrderButton, mainView.lPriceOrderButton]
     
     var searchKeyword: String?  // 검색 키워드
     let filterList: [Filter] = Filter.allCases  // 필터 리스트
     let productAPIManager = ProductAPIManager()
     var productList: [Product] = [] {   // 상품 리스트
         didSet {
-            productCollectionView.reloadData()
+            mainView.productCollectionView.reloadData()
         }
     }
     var searchCount: Int = 0 {  // 검색 결과 개수
         didSet {
             let count = searchCount.convertPriceString()
-            searchCountLabel.text = "\(count) 개의 검색 결과"
+            mainView.searchCountLabel.text = "\(count) 개의 검색 결과"
         }
     }
 
@@ -43,10 +36,7 @@ class SearchResultViewController: UIViewController, ViewProtocol {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        configureHierarchy()
-        configureLayout()
         configureView()
-        configureNavigationItem()
         configureCollectionView()
         
         filterButtons.forEach {
@@ -90,6 +80,10 @@ class SearchResultViewController: UIViewController, ViewProtocol {
 //        }
     }
     
+    override func loadView() {
+        view = mainView
+    }
+    
     // 필터 버튼 클릭했을 때
     @objc func filterButtonClicked(_ sender: UIButton) {
         setButtonDesign(filterButtons[selectedIndex], isActive: false)
@@ -115,7 +109,7 @@ class SearchResultViewController: UIViewController, ViewProtocol {
                 }
                 self.productList = products
                 if !self.productList.isEmpty {
-                    self.productCollectionView.scrollToItem(at: IndexPath(item: 0, section: 0), at: .top, animated: true)
+                    self.mainView.productCollectionView.scrollToItem(at: IndexPath(item: 0, section: 0), at: .top, animated: true)
                 }
             } else {
                 guard let error = networkError else { return }
@@ -137,6 +131,16 @@ class SearchResultViewController: UIViewController, ViewProtocol {
 //            self.productList = products
 //            self.productCollectionView.scrollToItem(at: IndexPath(item: 0, section: 0), at: .top, animated: true)
 //        }
+    }
+    
+    func configureView() {
+        for index in 1...filterButtons.count - 1 {
+            filterButtons[index].setTitle(filterList[index].title, for: .normal)
+            filterButtons[index].tag = index
+        }
+        
+        filterButtons[0].design(title: filterList[0].title, titleColor: ColorStyle.backgroundColor,
+                                backgroundColor: ColorStyle.textColor, cornerRadius: 8)
     }
      
     func printError(error: Error) {
@@ -167,29 +171,15 @@ class SearchResultViewController: UIViewController, ViewProtocol {
     }
     
     func configureCollectionView() {
-        productCollectionView.delegate = self
-        productCollectionView.dataSource = self
-        productCollectionView.prefetchDataSource = self
-        productCollectionView.backgroundColor = ColorStyle.backgroundColor
-
-        productCollectionView.register(ProductCollectionViewCell.self, forCellWithReuseIdentifier: ProductCollectionViewCell.identifier)
+        mainView.productCollectionView.delegate = self
+        mainView.productCollectionView.dataSource = self
+        mainView.productCollectionView.prefetchDataSource = self
+        mainView.productCollectionView.backgroundColor = ColorStyle.backgroundColor
     }
     
-    func configureCollectionViewFlowLayout() -> UICollectionViewFlowLayout {
-        let layout = UICollectionViewFlowLayout()
-        let spacing: CGFloat = 12
-        let cellWidth = UIScreen.main.bounds.width - (spacing*2) - 32
-        layout.itemSize = .init(width: cellWidth/2, height: (cellWidth/2) * 1.5)
-        layout.minimumLineSpacing = 12
-        layout.minimumInteritemSpacing = 12
-        layout.sectionInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
-        layout.scrollDirection = .vertical
-        
-        return layout
-    }
     
     // navigationItem 디자인
-    func configureNavigationItem() {
+    override func configureNavigationItem() {
         if let searchKeyword {
             navigationItem.title = searchKeyword
         } else {
@@ -197,6 +187,7 @@ class SearchResultViewController: UIViewController, ViewProtocol {
         }
         navigationItem.hidesBackButton = true
         let backItem = UIBarButtonItem(image: ImageStyle.back, style: .plain, target: self, action: #selector(popView))
+        backItem.tintColor = ColorStyle.textColor
         navigationItem.leftBarButtonItem = backItem
     }
     
@@ -204,58 +195,6 @@ class SearchResultViewController: UIViewController, ViewProtocol {
     @objc func popView() {
         searchKeyword = nil
         navigationController?.popViewController(animated: true)
-    }
-    
-    func configureHierarchy() {
-        [searchCountLabel, filterStackView, productCollectionView].forEach {
-            view.addSubview($0)
-        }
-        
-        filterButtons.forEach {
-            filterStackView.addArrangedSubview($0)
-        }
-    }
-    
-    func configureLayout() {
-        searchCountLabel.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaLayoutGuide).offset(12)
-            make.horizontalEdges.equalToSuperview().inset(16)
-            make.height.equalTo(18)
-        }
-        
-        filterStackView.snp.makeConstraints { make in
-            make.top.equalTo(searchCountLabel.snp.bottom).offset(12)
-            make.leading.equalTo(searchCountLabel)
-        }
-        
-        filterButtons.forEach {
-            $0.snp.makeConstraints { make in
-                make.height.equalTo(28)
-            }
-        }
-        
-        productCollectionView.snp.makeConstraints { make in
-            make.top.equalTo(filterStackView.snp.bottom).offset(12)
-            make.horizontalEdges.bottom.equalTo(view.safeAreaLayoutGuide)
-        }
-    }
-    
-    // 뷰 디자인
-    func configureView() {
-        view.backgroundColor = ColorStyle.backgroundColor
-        
-        searchCountLabel.design(text: "0 개의 검색 결과", textColor: ColorStyle.pointColor, font: .boldSystemFont(ofSize: 13))
-        
-        filterStackView.design(distribution: .equalSpacing, spacing: 8)
-        
-        for index in 1...filterButtons.count - 1 {
-            filterButtons[index].setTitle(filterList[index].title, for: .normal)
-            filterButtons[index].tag = index
-        }
-        
-        filterButtons[0].design(title: filterList[0].title, titleColor: ColorStyle.backgroundColor,
-                                backgroundColor: ColorStyle.textColor, cornerRadius: 8)
-        filterButtons[0].tag = 0
     }
     
     // 좋아요 버튼 클릭했을 때
@@ -275,7 +214,7 @@ class SearchResultViewController: UIViewController, ViewProtocol {
                 UserDefaultManager.shared.likeCount = productIds.count
             }
         }
-        productCollectionView.reloadItems(at: [IndexPath(item: sender.tag , section: 0)])
+        mainView.productCollectionView.reloadItems(at: [IndexPath(item: sender.tag , section: 0)])
     }
 }
 

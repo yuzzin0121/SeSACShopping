@@ -6,7 +6,6 @@
 //
 
 import UIKit
-import WebKit
 
 /*
  1. [검색 결과 화면]에서 셀을 선택했을 때 [상품 상세 화면]이 보인다.
@@ -18,9 +17,8 @@ import WebKit
  */
 
 // 상품 상세 화면
-class ProductDetailViewController: UIViewController, ViewProtocol {
-    let webView = WKWebView()
-    
+class ProductDetailViewController: BaseViewController {
+    let mainView = ProductDetailView()
     var productTitle: String?   // 상품 타이틀
     var productId: String? = nil    // 상품 id
     var heartImage: UIImage = ImageStyle.like
@@ -33,11 +31,11 @@ class ProductDetailViewController: UIViewController, ViewProtocol {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        configureHierarchy()
-        configureLayout()
-        configureView()
-        configureNavigationItem()
         showWebView()
+    }
+    
+    override func loadView() {
+        view = mainView
     }
     
     // 웹뷰 띄우기
@@ -45,7 +43,7 @@ class ProductDetailViewController: UIViewController, ViewProtocol {
         if let productId {
             if let url = URL(string: "https://msearch.shopping.naver.com/product/\(productId)") {
                 let request = URLRequest(url: url)
-                webView.load(request)
+                mainView.webView.load(request)
             }
         }
     }
@@ -78,7 +76,7 @@ class ProductDetailViewController: UIViewController, ViewProtocol {
     }
     
     // navigationItem 디자인
-    func configureNavigationItem() {
+    override func configureNavigationItem() {
         if let productTitle {
             navigationItem.title = "\(productTitle)"
         } else {
@@ -92,17 +90,4 @@ class ProductDetailViewController: UIViewController, ViewProtocol {
         navigationItem.rightBarButtonItem = heartItem
     }
     
-    func configureHierarchy() {
-        view.addSubview(webView)
-    }
-    
-    func configureLayout() {
-        webView.snp.makeConstraints { make in
-            make.edges.equalTo(view.safeAreaLayoutGuide)
-        }
-    }
-    
-    func configureView() {
-        view.backgroundColor = ColorStyle.backgroundColor
-    }
 }
