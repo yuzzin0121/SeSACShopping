@@ -7,9 +7,8 @@
 
 import UIKit
 
-class ProfileImageSettingViewController: UIViewController, ViewProtocol {
-    let selectedProfileImageView = ProfileImageView(frame: .zero)
-    lazy var profileImageCollectionView = UICollectionView(frame: .zero, collectionViewLayout: configureCollectionViewFlowLayout())
+class ProfileImageSettingViewController: BaseViewController {
+    let mainView = ProfileImageSettingView()
     
     var selectedProfileImageIndex: Int?
     var type: Type = .Onboarding    
@@ -20,11 +19,11 @@ class ProfileImageSettingViewController: UIViewController, ViewProtocol {
     // MARK: - viewDidLoad()
     override func viewDidLoad() {
         super.viewDidLoad()
-        configureHierarchy()
-        configureView()
         configureCollectionView()
-        configureLayout()
-        configureNavigationItem()
+    }
+    
+    override func loadView() {
+        view = mainView
     }
     
     // MARK: - viewWillAppear()
@@ -33,12 +32,12 @@ class ProfileImageSettingViewController: UIViewController, ViewProtocol {
     
         guard let selectedProfileImageIndex else { return }
         profileList[selectedProfileImageIndex].isSelected = true
-        selectedProfileImageView.image = profileList[selectedProfileImageIndex].profileImage
+        mainView.selectedProfileImageView.image = profileList[selectedProfileImageIndex].profileImage
     }
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        selectedProfileImageView.layer.cornerRadius = selectedProfileImageView.frame.height / 2
+        mainView.selectedProfileImageView.layer.cornerRadius = mainView.selectedProfileImageView.frame.height / 2
     }
     
     // pop - 시작 화면으로
@@ -53,55 +52,18 @@ class ProfileImageSettingViewController: UIViewController, ViewProtocol {
     
     // CollectionView 설정
     func configureCollectionView() {
-        profileImageCollectionView.delegate = self
-        profileImageCollectionView.dataSource = self
-        profileImageCollectionView.register(ProfileImageCollectionViewCell.self, forCellWithReuseIdentifier: ProfileImageCollectionViewCell.identifier)
+        mainView.profileImageCollectionView.delegate = self
+        mainView.profileImageCollectionView.dataSource = self
+        mainView.profileImageCollectionView.register(ProfileImageCollectionViewCell.self, forCellWithReuseIdentifier: ProfileImageCollectionViewCell.identifier)
     }
     
-    func configureCollectionViewFlowLayout() -> UICollectionViewFlowLayout {
-        let flowLayout = UICollectionViewFlowLayout()
-        let spacing: CGFloat = 36
-        let cellWidth = (UIScreen.main.bounds.width - spacing*2) / 4
-        
-        flowLayout.itemSize = CGSize(width: cellWidth, height: cellWidth)
-        flowLayout.sectionInset = UIEdgeInsets(top: 12, left: 12, bottom: 12, right: 12)
-        flowLayout.scrollDirection = .vertical
-        return flowLayout
-    }
     
     // navigationItem 설정
-    func configureNavigationItem() {
+    override func configureNavigationItem() {
         navigationItem.title = "프로필 설정"
         navigationItem.hidesBackButton = true
         let backItem = UIBarButtonItem(image: ImageStyle.back, style: .plain, target: self, action: #selector(popView))
         navigationItem.leftBarButtonItem = backItem
-    }
-    
-    func configureHierarchy() {
-        [selectedProfileImageView, profileImageCollectionView].forEach {
-            view.addSubview($0)
-        }
-    }
-    
-    func configureLayout() {
-        selectedProfileImageView.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaLayoutGuide).offset(24)
-            make.centerX.equalToSuperview()
-            make.size.equalTo(100)
-        }
-        
-        profileImageCollectionView.snp.makeConstraints { make in
-            make.top.equalTo(selectedProfileImageView.snp.bottom).offset(36)
-            make.horizontalEdges.bottom.equalTo(view.safeAreaLayoutGuide)
-        }
-    }
-    
-    // 뷰 디자인
-    func configureView() {
-        navigationController?.setupBarAppearance()
-        view.backgroundColor = ColorStyle.backgroundColor
-        
-        profileImageCollectionView.backgroundColor = ColorStyle.backgroundColor
     }
 }
 
@@ -122,8 +84,8 @@ extension ProfileImageSettingViewController: UICollectionViewDelegate, UICollect
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         profileList[selectedProfileImageIndex!].isSelected = false
         selectedProfileImageIndex = indexPath.row
-        selectedProfileImageView.image = profileList[selectedProfileImageIndex!].profileImage
+        mainView.selectedProfileImageView.image = profileList[selectedProfileImageIndex!].profileImage
         profileList[indexPath.row].isSelected = true
-        profileImageCollectionView.reloadData()
+        mainView.profileImageCollectionView.reloadData()
     }
 }

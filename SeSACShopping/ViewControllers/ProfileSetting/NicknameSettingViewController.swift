@@ -9,13 +9,8 @@ import UIKit
 
 // 프로필 닉네임 설정 화면
 
-class NicknameSettingViewController: UIViewController, ViewProtocol {
-    let profileImageView = ProfileImageView(frame: .zero)
-    let cameraImageView = UIImageView()
-    let nicknameTextField = UITextField()
-    let textFieldUnderLine = UIView()
-    let statusLabel = UILabel()
-    let finishButton = PointButton()
+class NicknameSettingViewController: BaseViewController {
+    let mainView = NicknameSettingView()
     
     lazy var profileList: [Profile] = ProfileImage.profileList
     var type: Type = .Setting   // 이전 화면의 타입
@@ -27,15 +22,16 @@ class NicknameSettingViewController: UIViewController, ViewProtocol {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureNavigationItem()
-        configureHierarchy()
-        configureView()
-        configureLayout()
         setData()
         hideKeyboardWhenTappedAround()
         let tabGesture = UITapGestureRecognizer(target: self, action: #selector(profileImageClicked))
-        profileImageView.addGestureRecognizer(tabGesture)
-        nicknameTextField.addTarget(self, action: #selector(nicknameEditingChanged), for: .editingChanged)
-        finishButton.addTarget(self, action: #selector(finishButtonClicked), for: .touchUpInside)
+        mainView.profileImageView.addGestureRecognizer(tabGesture)
+        mainView.nicknameTextField.addTarget(self, action: #selector(nicknameEditingChanged), for: .editingChanged)
+        mainView.finishButton.addTarget(self, action: #selector(finishButtonClicked), for: .touchUpInside)
+    }
+    
+    override func loadView() {
+        view = mainView
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -45,20 +41,20 @@ class NicknameSettingViewController: UIViewController, ViewProtocol {
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        profileImageView.layer.cornerRadius = profileImageView.frame.height / 2
+        mainView.profileImageView.layer.cornerRadius = mainView.profileImageView.frame.height / 2
     }
     
     func setData() {
         if type == .Onboarding {    // 이전 화면이 온보딩 화면일 경우
             selectedImageIndex = getRandomImageIndex()  // 랜덤 프로필 이미지 설정
             if let selectedImageIndex {
-                self.profileImageView.image = profileList[selectedImageIndex].profileImage
+                mainView.profileImageView.image = profileList[selectedImageIndex].profileImage
             }
         }
         if type == .Setting {   // 이전 화면이 설정 화면일 경우
-            nicknameTextField.text = nickname
+            mainView.nicknameTextField.text = nickname
             if let selectedImageIndex {
-                self.profileImageView.image = profileList[selectedImageIndex].profileImage
+                mainView.profileImageView.image = profileList[selectedImageIndex].profileImage
             }
             
             isValid = true
@@ -72,7 +68,7 @@ class NicknameSettingViewController: UIViewController, ViewProtocol {
         ProfileImageSettingVC.selectedProfileImageIndex = selectedImageIndex
         ProfileImageSettingVC.completionHandler = { index in
             self.selectedImageIndex = index // 인덱스 전달받기
-            self.profileImageView.image = self.profileList[index].profileImage
+            self.mainView.profileImageView.image = self.profileList[index].profileImage
         }
         navigationController?.pushViewController(ProfileImageSettingVC, animated: true)
     }
@@ -89,16 +85,6 @@ class NicknameSettingViewController: UIViewController, ViewProtocol {
         } else {
             print("닉네임 조건 불일치")
         }
-    }
-    
-    // 메인 탭바로 화면 전환
-    func showMainTabBar() {
-        let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene
-        let sceneDelegate = windowScene?.delegate as? SceneDelegate
-        let MainSB = UIStoryboard(name: "Main", bundle: nil)
-        let tabC = MainSB.instantiateViewController(identifier: "MainTabBarController") as! UITabBarController
-        sceneDelegate?.window?.rootViewController = tabC
-        sceneDelegate?.window?.makeKeyAndVisible()
     }
     
     // 닉네임, 프로필 이미지, UserStatus 저장
@@ -125,19 +111,19 @@ class NicknameSettingViewController: UIViewController, ViewProtocol {
         
         do {
             let result = try validateNicknameInputError(text: text)
-            statusLabel.text = "사용할 수 있는 닉네임이에요"
+            mainView.statusLabel.text = "사용할 수 있는 닉네임이에요"
             isValid = true
             nickname = text
         } catch {
             switch error {
             case ValidationNicknameError.invalidateLength:
-                statusLabel.text = ValidationNicknameError.invalidateLength.message
+                mainView.statusLabel.text = ValidationNicknameError.invalidateLength.message
             case ValidationNicknameError.isSpecialChars:
-                statusLabel.text = ValidationNicknameError.isSpecialChars.message
+                mainView.statusLabel.text = ValidationNicknameError.isSpecialChars.message
             case ValidationNicknameError.isNumber:
-                statusLabel.text = ValidationNicknameError.isNumber.message
+                mainView.statusLabel.text = ValidationNicknameError.isNumber.message
             default:
-                statusLabel.text = "사용할 수 없는 닉네임입니다."
+                mainView.statusLabel.text = "사용할 수 없는 닉네임입니다."
             }
             isValid = false
         }
@@ -185,7 +171,8 @@ class NicknameSettingViewController: UIViewController, ViewProtocol {
     }
     
     
-    func configureNavigationItem() {
+    override func configureNavigationItem() {
+        super.configureNavigationItem()
         navigationItem.title = (type == .Onboarding) ? "프로필 설정" : "프로필 수정"
         navigationItem.hidesBackButton = true
         let backItem = UIBarButtonItem(image: ImageStyle.back, style: .plain, target: self, action: #selector(popView))
@@ -205,61 +192,7 @@ class NicknameSettingViewController: UIViewController, ViewProtocol {
         navigationController?.popViewController(animated: true)
     }
   
-    func configureHierarchy() {
-        [profileImageView, cameraImageView, nicknameTextField, textFieldUnderLine, statusLabel, finishButton].forEach {
-            view.addSubview($0)
-        }
-        
-    }
     
-    func configureView() {
-        navigationController?.setupBarAppearance()
-        view.backgroundColor = ColorStyle.backgroundColor
-        
-        cameraImageView.design(image: ImageStyle.camera,
-                               cornerRadius: cameraImageView.frame.height/2)
-        nicknameTextField.design(placeholder: "닉네임을 입력해주세요:)",
-                                 cornerRadius: 12)
-        
-        textFieldUnderLine.backgroundColor = ColorStyle.textColor
-        statusLabel.design(text: "", textColor: ColorStyle.pointColor, font: .systemFont(ofSize: 13))
-        
-        finishButton.setTitle("완료", for: .normal)
-    }
-    
-    func configureLayout() {
-        profileImageView.snp.makeConstraints { make in
-            make.size.equalTo(100)
-            make.top.equalTo(view.safeAreaLayoutGuide).offset(50)
-            make.centerX.equalToSuperview()
-        }
-        cameraImageView.snp.makeConstraints { make in
-            make.bottom.trailing.equalTo(profileImageView)
-            make.size.equalTo(30)
-        }
-        
-        nicknameTextField.snp.makeConstraints { make in
-            make.top.equalTo(profileImageView.snp.bottom).offset(24)
-            make.horizontalEdges.equalToSuperview().inset(24)
-            make.height.equalTo(44)
-        }
-        textFieldUnderLine.snp.makeConstraints { make in
-            make.top.equalTo(nicknameTextField.snp.bottom)
-            make.horizontalEdges.equalTo(nicknameTextField)
-            make.height.equalTo(1)
-        }
-        
-        statusLabel.snp.makeConstraints { make in
-            make.top.equalTo(textFieldUnderLine.snp.bottom).offset(12)
-            make.horizontalEdges.equalToSuperview().inset(28)
-            make.height.equalTo(20)
-        }
-        finishButton.snp.makeConstraints { make in
-            make.top.equalTo(statusLabel.snp.bottom).offset(28)
-            make.horizontalEdges.equalTo(nicknameTextField)
-            make.height.equalTo(44)
-        }
-    }
     
     // 랜덤으로 프로필 이미지 가져오기
     func getRandomImageIndex() -> Int {

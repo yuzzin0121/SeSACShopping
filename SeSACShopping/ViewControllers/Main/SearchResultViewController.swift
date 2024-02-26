@@ -114,7 +114,9 @@ class SearchResultViewController: UIViewController, ViewProtocol {
                     products.append(Product(isLike: isLike, productItem: product))
                 }
                 self.productList = products
-                self.productCollectionView.scrollToItem(at: IndexPath(item: 0, section: 0), at: .top, animated: true)
+                if !self.productList.isEmpty {
+                    self.productCollectionView.scrollToItem(at: IndexPath(item: 0, section: 0), at: .top, animated: true)
+                }
             } else {
                 guard let error = networkError else { return }
                 self.printError(error: error)
