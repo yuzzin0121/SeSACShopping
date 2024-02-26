@@ -35,7 +35,9 @@ class ProductCollectionViewCell: UICollectionViewCell, CellProtocol, ViewProtoco
     }
     
     override func draw(_ rect: CGRect) {
-        productImageView.design(cornerRadius: 14)
+        productImageView.layer.cornerRadius = 14
+        productImageView.clipsToBounds = true
+        
         likeButton.design(image: ImageStyle.like,
                           tintColor: ColorStyle.backgroundColor,
                           backgroundColor: ColorStyle.textColor,
