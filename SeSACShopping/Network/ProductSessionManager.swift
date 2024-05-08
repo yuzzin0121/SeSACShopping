@@ -15,10 +15,9 @@ class ProductSessionManager {
     
     private init() { }
     
+    // URLSession은 persentEncoding을 자동으로 처리해준다.
     func fetchNaverProduct(keyword: String, sort: String, start: Int = 1, completionHandler: @escaping CompletionHandler) {
-        // 인코딩 처리
-        let query = keyword.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)
-//        let url = "https://openapi.naver.com/v1/search/shop.json?query=\(query ?? keyword)&display=30&sort=\(sort)&start=\(start)"
+        let url = "https://openapi.naver.com/v1/search/shop.json?query=\(keyword)&display=30&sort=\(sort)&start=\(start)"
         
         let scheme = "https"
         let host = "openapi.naver.com"
@@ -29,11 +28,13 @@ class ProductSessionManager {
         component.host = host
         component.path = path
         component.queryItems = [
-            URLQueryItem(name: "query", value: query),
+            URLQueryItem(name: "query", value: keyword),
             URLQueryItem(name: "display", value: "30"),
             URLQueryItem(name: "sort", value: sort),
             URLQueryItem(name: "start", value: "\(start)")
         ]
+        
+        print(component)
         
         guard let url = component.url else { return }
         
@@ -58,6 +59,7 @@ class ProductSessionManager {
                 }
                 
                 if let data = data, let result = try? JSONDecoder().decode(ProductsInfo.self, from: data) {
+                    dump(result)
                     completionHandler(result, nil)
                 }  else {
                     print("Invalid data")

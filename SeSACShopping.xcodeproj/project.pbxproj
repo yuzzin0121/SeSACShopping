@@ -60,6 +60,8 @@
 		61BF24212B8D0C60004EAE01 /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61BF24202B8D0C60004EAE01 /* MainView.swift */; };
 		61BF24252B8D0D49004EAE01 /* ProductDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61BF24242B8D0D49004EAE01 /* ProductDetailView.swift */; };
 		61BF24282B8D0DD8004EAE01 /* SearchResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61BF24272B8D0DD8004EAE01 /* SearchResultView.swift */; };
+		61BF242A2B8D0FD6004EAE01 /* NicknameSettingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61BF24292B8D0FD6004EAE01 /* NicknameSettingViewModel.swift */; };
+		61BF242D2B8D0FF9004EAE01 /* Observable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61BF242C2B8D0FF9004EAE01 /* Observable.swift */; };
 		61D56EBB2B5E4130000D28E1 /* RecentSearchTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61D56EB92B5E4130000D28E1 /* RecentSearchTableViewCell.swift */; };
 		61D56EBE2B5E4E20000D28E1 /* Product.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61D56EBD2B5E4E20000D28E1 /* Product.swift */; };
 		61E8EC0E2B72EBD600BEAFE5 /* ValidationNicknameError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61E8EC0D2B72EBD600BEAFE5 /* ValidationNicknameError.swift */; };
@@ -119,6 +121,8 @@
 		61BF24202B8D0C60004EAE01 /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
 		61BF24242B8D0D49004EAE01 /* ProductDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProductDetailView.swift; sourceTree = "<group>"; };
 		61BF24272B8D0DD8004EAE01 /* SearchResultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchResultView.swift; sourceTree = "<group>"; };
+		61BF24292B8D0FD6004EAE01 /* NicknameSettingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NicknameSettingViewModel.swift; sourceTree = "<group>"; };
+		61BF242C2B8D0FF9004EAE01 /* Observable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Observable.swift; sourceTree = "<group>"; };
 		61D56EB92B5E4130000D28E1 /* RecentSearchTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentSearchTableViewCell.swift; sourceTree = "<group>"; };
 		61D56EBD2B5E4E20000D28E1 /* Product.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Product.swift; sourceTree = "<group>"; };
 		61E8EC0D2B72EBD600BEAFE5 /* ValidationNicknameError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ValidationNicknameError.swift; sourceTree = "<group>"; };
@@ -171,6 +175,7 @@
 		6150F4942B5900150035F522 /* SeSACShopping */ = {
 			isa = PBXGroup;
 			children = (
+				61BF242B2B8D0FEE004EAE01 /* ViewModel */,
 				61BF24132B8D02CC004EAE01 /* Base */,
 				611757392B67DE330043E958 /* Component */,
 				6150F4C42B5921DE0035F522 /* Enum */,
@@ -378,6 +383,23 @@
 			path = SearchResult;
 			sourceTree = "<group>";
 		};
+		61BF242B2B8D0FEE004EAE01 /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				61BF242E2B8D1011004EAE01 /* Setting */,
+				61BF242C2B8D0FF9004EAE01 /* Observable.swift */,
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		61BF242E2B8D1011004EAE01 /* Setting */ = {
+			isa = PBXGroup;
+			children = (
+				61BF24292B8D0FD6004EAE01 /* NicknameSettingViewModel.swift */,
+			);
+			path = Setting;
+			sourceTree = "<group>";
+		};
 		61D56EB82B5E410C000D28E1 /* Search */ = {
 			isa = PBXGroup;
 			children = (
@@ -470,6 +492,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				61BF242D2B8D0FF9004EAE01 /* Observable.swift in Sources */,
 				6150F4962B5900150035F522 /* AppDelegate.swift in Sources */,
 				6150F5062B5D91EA0035F522 /* Int+extension.swift in Sources */,
 				61D56EBB2B5E4130000D28E1 /* RecentSearchTableViewCell.swift in Sources */,
@@ -508,6 +531,7 @@
 				6150F4E42B5AB2940035F522 /* ProfileImage.swift in Sources */,
 				6150F4B42B5904800035F522 /* OnboardingViewController.swift in Sources */,
 				61BF24152B8D02D7004EAE01 /* BaseView.swift in Sources */,
+				61BF242A2B8D0FD6004EAE01 /* NicknameSettingViewModel.swift in Sources */,
 				6150F4F02B5B887B0035F522 /* Type.swift in Sources */,
 				6150F4FE2B5D88020035F522 /* ProductInfo.swift in Sources */,
 				6150F4BF2B591BD30035F522 /* UIButton+Extension.swift in Sources */,

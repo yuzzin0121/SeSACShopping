@@ -43,6 +43,7 @@ class SearchResultViewController: BaseViewController {
             $0.addTarget(self, action: #selector(filterButtonClicked), for: .touchUpInside)
         }
         if let searchKeyword, let sortValue = filterList.first?.sortValue {
+            print(searchKeyword, sortValue)
             // 상품 검색
             ProductSessionManager.shared.fetchNaverProduct(keyword: searchKeyword, sort: sortValue) { productsInfo, networkError in
                 if networkError == nil {
