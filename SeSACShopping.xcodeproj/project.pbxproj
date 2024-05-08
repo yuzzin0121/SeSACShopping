@@ -155,6 +155,14 @@
 			path = Component;
 			sourceTree = "<group>";
 		};
+		612A0E572BEBA3590001D9E3 /* Error */ = {
+			isa = PBXGroup;
+			children = (
+				61E8EC112B72EF9500BEAFE5 /* NetworkError.swift */,
+			);
+			path = Error;
+			sourceTree = "<group>";
+		};
 		6150F4892B5900150035F522 = {
 			isa = PBXGroup;
 			children = (
@@ -213,6 +221,7 @@
 		6150F4B02B59014A0035F522 /* Network */ = {
 			isa = PBXGroup;
 			children = (
+				612A0E572BEBA3590001D9E3 /* Error */,
 				6150F4FB2B5D865C0035F522 /* ProductAPIManager.swift */,
 				61E8EC0F2B72EF4700BEAFE5 /* ProductSessionManager.swift */,
 			);
@@ -261,7 +270,6 @@
 				6150F4C52B5921E70035F522 /* ImageStyle.swift */,
 				6150F4C72B5922260035F522 /* ColorStyle.swift */,
 				61E8EC0D2B72EBD600BEAFE5 /* ValidationNicknameError.swift */,
-				61E8EC112B72EF9500BEAFE5 /* NetworkError.swift */,
 			);
 			path = Enum;
 			sourceTree = "<group>";

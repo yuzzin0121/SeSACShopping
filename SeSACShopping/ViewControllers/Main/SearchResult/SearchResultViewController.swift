@@ -38,33 +38,31 @@ class SearchResultViewController: BaseViewController {
         super.viewDidLoad()
         configureView()
         configureCollectionView()
-        
-        filterButtons.forEach {
-            $0.addTarget(self, action: #selector(filterButtonClicked), for: .touchUpInside)
-        }
-        if let searchKeyword, let sortValue = filterList.first?.sortValue {
-            print(searchKeyword, sortValue)
-            // 상품 검색
-            ProductSessionManager.shared.fetchNaverProduct(keyword: searchKeyword, sort: sortValue) { productsInfo, networkError in
-                if networkError == nil {
-                    guard let productsInfo = productsInfo else { return }
-                    self.searchCount = productsInfo.total
-                    let likeIds = UserDefaultManager.shared.likeProductIds
-                    var products: [Product] = []
-                    for product in productsInfo.items {
-                        var isLike = false
-                        if likeIds.contains(product.productId) {
-                            isLike = true
-                        }
-                        products.append(Product(isLike: isLike, productItem: product))
-                    }
-                    self.productList = products
-                } else {
-                    guard let error = networkError else { return }
-                    self.printError(error: error)
-                }
-            }
-        }
+        setAction()
+        searchProduct(sortValue: filterList.first?.sortValue)
+//        if let searchKeyword, let sortValue = filterList.first?.sortValue {
+//            print(searchKeyword, sortValue)
+//            // 상품 검색
+//            ProductSessionManager.shared.fetchNaverProduct(keyword: searchKeyword, sort: sortValue) { productsInfo, networkError in
+//                if networkError == nil {
+//                    guard let productsInfo = productsInfo else { return }
+//                    self.searchCount = productsInfo.total
+//                    let likeIds = UserDefaultManager.shared.likeProductIds
+//                    var products: [Product] = []
+//                    for product in productsInfo.items {
+//                        var isLike = false
+//                        if likeIds.contains(product.productId) {
+//                            isLike = true
+//                        }
+//                        products.append(Product(isLike: isLike, productItem: product))
+//                    }
+//                    self.productList = products
+//                } else {
+//                    guard let error = networkError else { return }
+//                    self.printError(error: error)
+//                }
+//            }
+//        }
         
 //        productAPIManager.callRequest(keyword: searchKeyword ?? "", sort: filterList[0].sortValue) { productsInfo in
 //            self.searchCount = productsInfo.total
@@ -81,6 +79,35 @@ class SearchResultViewController: BaseViewController {
 //        }
     }
     
+    private func searchProduct(sortValue: String?, start: Int = 1) {
+        guard let searchKeyword, let sortValue else {
+            print("검색에 필요한 정보가 없습니다.")
+            return
+        }
+        
+        Task {
+            let searchedProduct = try await ProductSessionManager.shared.fetchNaverProductAsyncAwait(keyword: searchKeyword, sort: sortValue, start: start)
+            searchCount = searchedProduct.items.count
+            let myLikeList = UserDefaultManager.shared.likeProductIds
+            
+            var products: [Product] = []
+            for product in searchedProduct.items {
+                var isLike = false
+                if myLikeList.contains(product.productId) {
+                    isLike = true
+                }
+                products.append(Product(isLike: isLike, productItem: product))
+            }
+            self.productList = products
+        }
+    }
+    
+    private func setAction() {
+        filterButtons.forEach {
+            $0.addTarget(self, action: #selector(filterButtonClicked), for: .touchUpInside)
+        }
+    }
+    
     override func loadView() {
         view = mainView
     }
@@ -94,29 +121,30 @@ class SearchResultViewController: BaseViewController {
         selectedIndex = index
         start = 1
         guard let searchKeyword else { return }
+        searchProduct(sortValue: filterList[index].sortValue)
         
-        ProductSessionManager.shared.fetchNaverProduct(keyword: searchKeyword, sort: filterList[index].sortValue) { productsInfo, networkError in
-            if networkError == nil {
-                guard let productsInfo = productsInfo else { return }
-                self.searchCount = productsInfo.total
-                let likeIds = UserDefaultManager.shared.likeProductIds
-                var products: [Product] = []
-                for product in productsInfo.items {
-                    var isLike = false
-                    if likeIds.contains(product.productId) {
-                        isLike = true
-                    }
-                    products.append(Product(isLike: isLike, productItem: product))
-                }
-                self.productList = products
-                if !self.productList.isEmpty {
-                    self.mainView.productCollectionView.scrollToItem(at: IndexPath(item: 0, section: 0), at: .top, animated: true)
-                }
-            } else {
-                guard let error = networkError else { return }
-                self.printError(error: error)
-            }
-        }
+//        ProductSessionManager.shared.fetchNaverProduct(keyword: searchKeyword, sort: filterList[index].sortValue) { productsInfo, networkError in
+//            if networkError == nil {
+//                guard let productsInfo = productsInfo else { return }
+//                self.searchCount = productsInfo.total
+//                let likeIds = UserDefaultManager.shared.likeProductIds
+//                var products: [Product] = []
+//                for product in productsInfo.items {
+//                    var isLike = false
+//                    if likeIds.contains(product.productId) {
+//                        isLike = true
+//                    }
+//                    products.append(Product(isLike: isLike, productItem: product))
+//                }
+//                self.productList = products
+//                if !self.productList.isEmpty {
+//                    self.mainView.productCollectionView.scrollToItem(at: IndexPath(item: 0, section: 0), at: .top, animated: true)
+//                }
+//            } else {
+//                guard let error = networkError else { return }
+//                self.printError(error: error)
+//            }
+//        }
         
 //        productAPIManager.callRequest(keyword: searchKeyword, sort: filterList[index].sortValue) { productsInfo in
 //            self.searchCount = productsInfo.total
@@ -264,6 +292,7 @@ extension SearchResultViewController: UICollectionViewDataSourcePrefetching {
 //                            self.productList.append(Product(isLike: isLike, productItem: product))
 //                        }
 //                    }
+                    
                     ProductSessionManager.shared.fetchNaverProduct(keyword: searchKeyword, sort: filterList[selectedIndex].sortValue, start: start) { productsInfo, networkError in
                         if networkError == nil {
                             guard let productsInfo = productsInfo else { return }
